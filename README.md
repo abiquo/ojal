@@ -1,7 +1,7 @@
 # Install
 
 ```
-go get https://github.com/abiquo/opal
+go get github.com/abiquo/opal
 ```
 
 # Test
