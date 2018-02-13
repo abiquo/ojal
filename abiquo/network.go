@@ -1,0 +1,41 @@
+package abiquo
+
+import (
+	"fmt"
+	"net/url"
+
+	. "github.com/abiquo/opal/core"
+)
+
+// Network represents an Abiquo API Network DTO
+type Network struct {
+	Address string `json:"address"`
+	DNS1    string `json:"primaryDNS,omitempty"`
+	DNS2    string `json:"secondaryDNS,omitempty"`
+	Mask    int    `json:"mask"`
+	Gateway string `json:"gateway"`
+	Name    string `json:"name"`
+	Suffix  string `json:"sufixDNS,omitempty"`
+	Tag     int    `json:"tag,omitempty"`
+	TypeNet string `json:"type"`
+	DTO
+}
+
+func newNetwork() Resource { return new(Network) }
+
+// IPs returns a network IPs collection
+func (n *Network) IPs(query url.Values) *Collection {
+	return n.Rel("ips").Collection(query)
+}
+
+// CreateIP creates the provided IP in the Network
+func (n *Network) CreateIP(i *IP) error {
+	var media string
+	switch n.TypeNet {
+	case "INTERNAL":
+		media = "privateip"
+	default:
+		return fmt.Errorf("CreateIP: %v ip type not implemented", n.TypeNet)
+	}
+	return Create(n.Rel("ips").SetType(media), i)
+}
