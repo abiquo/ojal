@@ -19,7 +19,7 @@ type battery []*struct {
 func (b battery) Run(name string, t *testing.T) {
 	for _, v := range b {
 		if v.Current != v.Expected {
-			t.Fatalf("%v %v ? %v != %v", name, v.Message, v.Current, v.Expected)
+			t.Errorf("%v %v ? %v != %v", name, v.Message, v.Current, v.Expected)
 		}
 	}
 }
