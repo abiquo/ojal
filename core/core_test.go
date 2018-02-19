@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	. "github.com/abiquo/opal/core"
+	"github.com/abiquo/opal/core"
 )
 
 type battery []*struct {
@@ -26,17 +26,17 @@ func (b battery) Run(name string, t *testing.T) {
 
 type dto struct {
 	Name string `json:"name"`
-	DTO
+	core.DTO
 }
 
-func newTenant() Resource { return new(dto) }
+func newTenant() core.Resource { return new(dto) }
 
 var (
-	none        *Link
-	self        *Link
-	edit        *Link
-	enterprise  Linker
-	enterprises Linker
+	none        *core.Link
+	self        *core.Link
+	edit        *core.Link
+	enterprise  core.Linker
+	enterprises core.Linker
 	name0       string
 	name1       string
 	enterprise0 *dto
@@ -45,46 +45,46 @@ var (
 )
 
 func TestInit(t *testing.T) {
-	basic := Basic{
+	basic := core.Basic{
 		Username: "admin",
 		Password: "xabiquo",
 	}
 
-	oauth := Oauth{
+	oauth := core.Oauth{
 		APIKey:      "5336cd80-d17b-488a-8917-518a12ee366a",
 		APISecret:   "nuDmkp1t4qmcyxGVfVsujmVqJ5VexeLIymvBA5Oy",
 		Token:       "7ea0959c-82f1-4013-ab2b-6648999f3915",
 		TokenSecret: "TgYSC9Y4TX3r+p9q3F8DhcJ3J9FFXOCmPD6pAKw1G31wTUAtlTgZTMJjDT/jS2F4K2DUYX6Py641PLeBkKMntS+GdKkO09ajkil9ZH67Fa0=",
 	}
 
-	err0 := Init("https://missing:443/api", Basic{})
-	err1 := Init("https://testing:443/api", Basic{})
-	err2 := Init("https://testing:443/api", oauth)
-	err3 := Init("https://testing:443/api", basic)
+	err0 := core.Init("https://missing:443/api", core.Basic{})
+	err1 := core.Init("https://testing:443/api", core.Basic{})
+	err2 := core.Init("https://testing:443/api", oauth)
+	err3 := core.Init("https://testing:443/api", basic)
 
 	battery{
 		{"err0", err0 == nil, false},
 		{"err1", err1 == nil, false},
 		{"err2", err2 == nil, true},
 		{"err3", err3 == nil, true},
-		{"Version()", Version(), "4.2"},
+		{"Version()", core.Version(), "4.2"},
 	}.Run("Init", t)
 
 	ts := time.Now().Unix()
 	name0 = fmt.Sprint("ztest A ", ts)
 	name1 = fmt.Sprint("ztest B ", ts)
-	none = NewLinkType("none", "none").SetRel("none").SetTitle("none")
-	self = NewLinkType("self", "self").SetRel("self").SetTitle("self")
-	edit = NewLinkType("edit", "edit").SetRel("edit").SetTitle("edit")
-	enterprise = NewLinker("admin/enterprises", "enterprise")
-	enterprises = NewLinker("admin/enterprises", "enterprises")
+	none = core.NewLinkType("none", "none").SetRel("none").SetTitle("none")
+	self = core.NewLinkType("self", "self").SetRel("self").SetTitle("self")
+	edit = core.NewLinkType("edit", "edit").SetRel("edit").SetTitle("edit")
+	enterprise = core.NewLinker("admin/enterprises", "enterprise")
+	enterprises = core.NewLinker("admin/enterprises", "enterprises")
 	enterprise0 = &dto{Name: name0}
 	enterprise1 = &dto{Name: name1}
 	result = &dto{}
-	RegisterResource("enterprise", newTenant)
-	RegisterResource("user", newTenant)
-	RegisterCollection("enterprises", newTenant)
-	RegisterCollection("user", newTenant)
+	core.RegisterResource("enterprise", newTenant)
+	core.RegisterResource("user", newTenant)
+	core.RegisterCollection("enterprises", newTenant)
+	core.RegisterCollection("user", newTenant)
 }
 
 func ExampleLink() {
@@ -101,7 +101,7 @@ func ExampleLink() {
 }
 
 func TestCall(t *testing.T) {
-	post, err := Rest(result, Post(
+	post, err := core.Rest(result, core.Post(
 		"admin/enterprises",
 		"enterprise",
 		"enterprise",
@@ -115,7 +115,7 @@ func TestCall(t *testing.T) {
 	}.Run("post", t)
 	href := post.Location()
 
-	put, err := Rest(result, Put(
+	put, err := core.Rest(result, core.Put(
 		href,
 		"enterprise",
 		"enterprise",
@@ -128,7 +128,7 @@ func TestCall(t *testing.T) {
 		{"enterprise.Name", result.Name, name1},
 	}.Run("put", t)
 
-	get, err := Rest(result, Get(href, "enterprise"))
+	get, err := core.Rest(result, core.Get(href, "enterprise"))
 	battery{
 		{"err", err, nil},
 		{"Ok()", get.Ok(), true},
@@ -136,14 +136,14 @@ func TestCall(t *testing.T) {
 		{"enterprise.Name", result.Name, name1},
 	}.Run("get", t)
 
-	delete1, err := Rest(nil, Delete(href))
+	delete1, err := core.Rest(nil, core.Delete(href))
 	battery{
 		{"err", err, nil},
 		{"Ok()", delete1.Ok(), true},
 		{"Status()", delete1.Status(), http.StatusNoContent},
 	}.Run("delete1", t)
 
-	delete2, err := Rest(nil, Delete(href))
+	delete2, err := core.Rest(nil, core.Delete(href))
 	battery{
 		{"err", err == nil, false},
 		{"Ok()", delete2.Ok(), false},
@@ -151,7 +151,7 @@ func TestCall(t *testing.T) {
 	}.Run("delete2", t)
 
 	values := url.Values{"idDatacenter": {"1"}}
-	query, err := Rest(nil, Get("admin/rules", "rules").Query(values))
+	query, err := core.Rest(nil, core.Get("admin/rules", "rules").Query(values))
 	battery{
 		{"err", err, nil},
 		{"Ok()", query.Ok(), true},
@@ -161,10 +161,10 @@ func TestCall(t *testing.T) {
 }
 
 func TestDTO(t *testing.T) {
-	dto := NewDTO(none)
+	dto := core.NewDTO(none)
 	battery{
 		{"Href()", dto.URL(), ""},
-		{"Type()", dto.Media(), Media("")},
+		{"Type()", dto.Media(), core.Media("")},
 	}.Run("none", t)
 
 	dto.Add(self)
@@ -181,9 +181,9 @@ func TestDTO(t *testing.T) {
 }
 
 func ExampleHref() {
-	fmt.Println(Resolve("", nil))
-	fmt.Println(Resolve("admin/rules", nil))
-	fmt.Println(Resolve("admin/rules", url.Values{"idDatacenter": {"1"}}))
+	fmt.Println(core.Resolve("", nil))
+	fmt.Println(core.Resolve("admin/rules", nil))
+	fmt.Println(core.Resolve("admin/rules", url.Values{"idDatacenter": {"1"}}))
 
 	// Output:
 	// https://testing:443/api/
@@ -192,9 +192,9 @@ func ExampleHref() {
 }
 
 func ExampleType() {
-	fmt.Println(Media(""))
-	fmt.Println(Media("text/plain"))
-	fmt.Println(Media("enterprise"))
+	fmt.Println(core.Media(""))
+	fmt.Println(core.Media("text/plain"))
+	fmt.Println(core.Media("enterprise"))
 
 	// Output:
 	//
@@ -205,7 +205,7 @@ func ExampleType() {
 func ExampleUpload() {
 	ova := "/home/antxon/Downloads/test.ova"
 	templates := "https://testing:443/am/erepos/1/templates"
-	reply, err := Upload(templates, ova)
+	reply, err := core.Upload(templates, ova)
 
 	fmt.Println(err)
 	fmt.Println(reply.Ok())
@@ -242,7 +242,7 @@ func ExampleCollection_List() {
 
 func ExampleCollection_Find() {
 	for _, name := range []string{"Abiquo", "abq"} {
-		finder := func(r Resource) bool {
+		finder := func(r core.Resource) bool {
 			return r.(*dto).Name == name
 		}
 		result := enterprises.Collection(nil).Find(finder)
@@ -264,12 +264,12 @@ func ExampleCollection_First() {
 
 func ExampleCrud() {
 	var (
-		create1 = Create(enterprise, enterprise0)
-		create2 = Create(enterprise, enterprise0)
-		read    = Read(enterprise0, enterprise0)
-		update  = Update(enterprise0, enterprise0)
-		remove1 = Remove(enterprise0)
-		remove2 = Remove(enterprise0)
+		create1 = core.Create(enterprise, enterprise0)
+		create2 = core.Create(enterprise, enterprise0)
+		read    = core.Read(enterprise0, enterprise0)
+		update  = core.Update(enterprise0, enterprise0)
+		remove1 = core.Remove(enterprise0)
+		remove2 = core.Remove(enterprise0)
 	)
 	fmt.Println(create1)
 	fmt.Println(create2)
@@ -288,7 +288,7 @@ func ExampleCrud() {
 }
 
 func TestWalk(t *testing.T) {
-	endpoint := NewLinker("admin/enterprises/1/users/1", "user")
+	endpoint := core.NewLinker("admin/enterprises/1/users/1", "user")
 	enterprise := endpoint.Walk().Walk("enterprise")
 
 	battery{
@@ -299,7 +299,7 @@ func TestWalk(t *testing.T) {
 
 func ExampleResources_Map() {
 	var count int
-	counter := func(r Resource) { count++ }
+	counter := func(r core.Resource) { count++ }
 	collection := enterprises.Collection(nil)
 	collection.List().Map(counter)
 	fmt.Println(collection.Size() == count)
@@ -309,7 +309,7 @@ func ExampleResources_Map() {
 }
 
 func ExampleResources_Filter() {
-	filter := func(r Resource) bool { return r.(*dto).Name == "Abiquo" }
+	filter := func(r core.Resource) bool { return r.(*dto).Name == "Abiquo" }
 	collection := enterprises.Collection(nil).List().Filter(filter)
 	fmt.Println(collection[0].(*dto).Name)
 	fmt.Println(len(collection))
