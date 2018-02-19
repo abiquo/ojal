@@ -8,15 +8,18 @@ import (
 
 // Datacenter represents an Abiquo API datacentercore.Resource
 type Datacenter struct {
-	ID             int           `json:"id"`
-	Location       string        `json:"location"`
-	Name           string        `json:"name"`
-	RemoteServices []interface{} `json:"remoteServices"`
+	ID             int    `json:"id,omitempty"`
+	Location       string `json:"location"`
+	Name           string `json:"name"`
+	RemoteServices struct {
+		Collection []RemoteService `json:"collection"`
+		core.DTO
+	} `json:"remoteServices"`
 	core.DTO
 }
 
 // NewDatacenter returns a new Abiquo API Datacenter DTO
-func NewDatacenter() core.Resource { return new(Datacenter) }
+func newDatacenter() core.Resource { return new(Datacenter) }
 
 // Datacenters returns the Abiquo API datacenters collection
 func Datacenters(query url.Values) *core.Collection {

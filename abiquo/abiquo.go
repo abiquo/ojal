@@ -10,7 +10,7 @@ var (
 	initialize  sync.Once
 	collections = map[string]func() Resource{
 		"categories":              NewCategory,
-		"datacenters":             NewDatacenter,
+		"datacenters":             newDatacenter,
 		"datacenterrepositories":  newDatacenterRepository,
 		"enterprises":             NewEnterprise,
 		"hardwareprofiles":        newHardwareProfile,
@@ -32,7 +32,7 @@ var (
 
 	resources = map[string]func() Resource{
 		"category":               NewCategory,
-		"datacenter":             NewDatacenter,
+		"datacenter":             newDatacenter,
 		"datacenterrepository":   newDatacenterRepository,
 		"enterprise":             NewEnterprise,
 		"hardwareprofile":        newHardwareProfile,
