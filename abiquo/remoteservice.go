@@ -8,10 +8,10 @@ import (
 
 type RemoteService struct {
 	ID     int    `json:"id,omitempty"`
-	Status int    `json:"status"`
+	Status int    `json:"status,omitempty"`
 	Type   string `json:"type"`
 	URI    string `json:"uri"`
-	UUID   string `json:"uuid"`
+	UUID   string `json:"uuid,omitempty"`
 	core.DTO
 }
 
