@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 	"testing"
 	"time"
 
@@ -32,6 +33,9 @@ type dto struct {
 func newTenant() core.Resource { return new(dto) }
 
 var (
+	basic       core.Basic
+	oauth       core.Oauth
+	environment map[string]string
 	none        *core.Link
 	self        *core.Link
 	edit        *core.Link
@@ -44,23 +48,41 @@ var (
 	result      *dto
 )
 
+func init() {
+	environment = map[string]string{
+		"OPAL_ENDPOINT":     os.Getenv("OPAL_ENDPOINT"),
+		"OPAL_USERNAME":     os.Getenv("OPAL_USERNAME"),
+		"OPAL_PASSWORD":     os.Getenv("OPAL_PASSWORD"),
+		"OPAL_TOKEN":        os.Getenv("OPAL_TOKEN"),
+		"OPAL_TOKEN_SECRET": os.Getenv("OPAL_TOKEN_SECRET"),
+		"OPAL_API_SECRET":   os.Getenv("OPAL_API_SECRET"),
+		"OPAL_API_KEY":      os.Getenv("OPAL_API_KEY"),
+	}
+
+	for k, v := range environment {
+		if v == "" {
+			panic(k + " environment variable should not be empty")
+		}
+	}
+
+	basic = core.Basic{
+		Username: environment["OPAL_USERNAME"],
+		Password: environment["OPAL_PASSWORD"],
+	}
+
+	oauth = core.Oauth{
+		APIKey:      environment["OPAL_API_KEY"],
+		APISecret:   environment["OPAL_API_SECRET"],
+		TokenSecret: environment["OPAL_TOKEN_SECRET"],
+		Token:       environment["OPAL_TOKEN"],
+	}
+}
+
 func TestInit(t *testing.T) {
-	basic := core.Basic{
-		Username: "admin",
-		Password: "xabiquo",
-	}
-
-	oauth := core.Oauth{
-		APIKey:      "5336cd80-d17b-488a-8917-518a12ee366a",
-		APISecret:   "nuDmkp1t4qmcyxGVfVsujmVqJ5VexeLIymvBA5Oy",
-		Token:       "7ea0959c-82f1-4013-ab2b-6648999f3915",
-		TokenSecret: "TgYSC9Y4TX3r+p9q3F8DhcJ3J9FFXOCmPD6pAKw1G31wTUAtlTgZTMJjDT/jS2F4K2DUYX6Py641PLeBkKMntS+GdKkO09ajkil9ZH67Fa0=",
-	}
-
-	err0 := core.Init("https://missing:443/api", core.Basic{})
-	err1 := core.Init("https://testing:443/api", core.Basic{})
-	err2 := core.Init("https://testing:443/api", oauth)
-	err3 := core.Init("https://testing:443/api", basic)
+	err0 := core.Init("https://fail:443/api", core.Basic{})
+	err1 := core.Init(environment["OPAL_ENDPOINT"], core.Basic{})
+	err2 := core.Init(environment["OPAL_ENDPOINT"], oauth)
+	err3 := core.Init(environment["OPAL_ENDPOINT"], basic)
 
 	battery{
 		{"err0", err0 == nil, false},
