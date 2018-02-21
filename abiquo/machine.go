@@ -2,33 +2,32 @@ package abiquo
 
 import "github.com/abiquo/opal/core"
 
-type MachineInterface struct {
-	MAC  string `json:"mac"`
-	Name string `json:"name"`
-	core.DTO
-}
-
 type Machine struct {
 	AgentUser  string `json:"agentUser"`
 	CPU        int    `json:"cpu"`
 	CPUUsed    int    `json:"cpuUsed"`
 	Datastores struct {
-		Collection []Datastore `json:"collection"`
+		Collection []*Datastore `json:"collection"`
 		core.DTO
 	} `json:"datastores"`
-	Description       string `json:"description"`
-	Hostname          string `json:"hostname"`
-	InitiatorIQN      string `json:"initiatorIQN"`
-	IP                string `json:"ip"`
-	IPService         string `json:"ipService"`
-	ManagerPassword   string `json:"managerPassword"`
-	ManagerUser       string `json:"managerUser"`
-	Name              string `json:"name"`
-	NetworkInterfaces struct {
-		Collection []MachineInterface `json:"collection"`
+	Description string `json:"description"`
+	Hostname    string `json:"hostname"`
+	Initiator   string `json:"initiatorIQN"`
+	IP          string `json:"ip"`
+	IPService   string `json:"ipService"`
+	ManagerIP   string `json:"managerIp,omitempty"`
+	ManagerPass string `json:"managerPassword,omitempty"`
+	ManagerUser string `json:"managerUser,omitempty"`
+	Name        string `json:"name"`
+	Interfaces  struct {
+		Collection []*struct {
+			MAC  string `json:"mac"`
+			Name string `json:"name"`
+			core.DTO
+		} `json:"collection"`
 		core.DTO
 	} `json:"networkInterfaces"`
-	Password string `json:"password"`
+	Password string `json:"password,omitempty"`
 	RAM      int    `json:"ram"`
 	RAMUsed  int    `json:"ramUsed"`
 	State    string `json:"state"`
