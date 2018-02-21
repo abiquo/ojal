@@ -6,7 +6,7 @@ type Datastore struct {
 	DatastoreUUID string `json:"datastoreUUID"`
 	Directory     string `json:"directory"`
 	Enabled       bool   `json:"enabled"`
-	ID            int    `json:"id"`
+	ID            int    `json:"id,omitempty"`
 	Name          string `json:"name"`
 	RootPath      string `json:"rootPath"`
 	Size          int64  `json:"size"`
