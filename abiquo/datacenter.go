@@ -40,3 +40,8 @@ func (d *Datacenter) Networks(query url.Values) *core.Collection {
 func (d *Datacenter) HardwareProfiles(query url.Values) *core.Collection {
 	return d.Rel("hardwareprofiles").Collection(query)
 }
+
+// Discover returns the datacenter discover action Values
+func (d *Datacenter) Discover(q url.Values) *core.Collection {
+	return d.Rel("discover").Collection(q)
+}
