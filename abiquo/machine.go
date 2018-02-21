@@ -28,6 +28,7 @@ type Machine struct {
 		core.DTO
 	} `json:"networkInterfaces"`
 	Password string `json:"password,omitempty"`
+	Port     string `json:"port,omitempty"`
 	RAM      int    `json:"ram"`
 	RAMUsed  int    `json:"ramUsed"`
 	State    string `json:"state"`
