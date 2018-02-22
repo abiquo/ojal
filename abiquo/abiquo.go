@@ -3,12 +3,12 @@ package abiquo
 import (
 	"sync"
 
-	. "github.com/abiquo/opal/core"
+	"github.com/abiquo/opal/core"
 )
 
 var (
 	initialize  sync.Once
-	collections = map[string]func() Resource{
+	collections = map[string]func() core.Resource{
 		"categories":              NewCategory,
 		"datacenters":             newDatacenter,
 		"datacenterrepositories":  newDatacenterRepository,
@@ -34,7 +34,7 @@ var (
 		"virtualmachinetemplates": NewVirtualMachineTemplate,
 	}
 
-	resources = map[string]func() Resource{
+	resources = map[string]func() core.Resource{
 		"category":               NewCategory,
 		"datacenter":             newDatacenter,
 		"datacenterrepository":   newDatacenterRepository,
@@ -64,12 +64,12 @@ var (
 // Abiquo initializes the Abiquo API client and registers the known collections
 func Abiquo(api string, credentials interface{}) (err error) {
 	initialize.Do(func() {
-		if err = Init(api, credentials); err == nil {
+		if err = core.Init(api, credentials); err == nil {
 			for media, constructor := range collections {
-				RegisterCollection(media, constructor)
+				core.RegisterCollection(media, constructor)
 			}
 			for resource, factory := range resources {
-				RegisterResource(resource, factory)
+				core.RegisterResource(resource, factory)
 			}
 		}
 	})
@@ -79,7 +79,7 @@ func Abiquo(api string, credentials interface{}) (err error) {
 // Login returns the User resource for the client credentials
 func Login() (user *User) {
 	u := new(User)
-	if err := Read(NewLinker("login", "user"), u); err == nil {
+	if err := core.Read(core.NewLinker("login", "user"), u); err == nil {
 		user = u
 	}
 	return
