@@ -22,7 +22,7 @@ type VirtualMachineTemplate struct {
 	OsType                           string      `json:"osType,omitempty"`
 	RAMRequired                      int         `json:"ramRequired,omitempty"`
 	Variables                        interface{} `json:"variables,omitempty"`
-	*core.DTO
+	core.DTO
 }
 
 // NewVirtualMachineTemplate returns a new Abiquo API virtual machine template DTO
