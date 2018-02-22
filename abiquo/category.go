@@ -3,7 +3,7 @@ package abiquo
 import (
 	"net/url"
 
-	. "github.com/abiquo/opal/core"
+	"github.com/abiquo/opal/core"
 )
 
 // Category represents and Abiquo API Category DTO
@@ -12,17 +12,17 @@ type Category struct {
 	Default  bool   `json:"defaultCategory"`
 	ID       int    `json:"id,omitempty"`
 	Erasable bool   `json:"erasable"`
-	DTO
+	core.DTO
 }
 
 // NewCategory category retuns an new Abiquo API Category DTO
-func NewCategory() Resource { return new(Category) }
+func NewCategory() core.Resource { return new(Category) }
 
-func Categories(query url.Values) *Collection {
-	return NewLinker("config/categories", "categories").Collection(query)
+func Categories(query url.Values) *core.Collection {
+	return core.NewLinker("config/categories", "categories").Collection(query)
 }
 
 // Create creates a new Category in the Abiquo API
 func (c *Category) Create() error {
-	return Create(NewLinker("config/categories", "category"), c)
+	return core.Create(core.NewLinker("config/categories", "category"), c)
 }

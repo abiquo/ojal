@@ -3,7 +3,7 @@ package abiquo
 import (
 	"net/url"
 
-	. "github.com/abiquo/opal/core"
+	"github.com/abiquo/opal/core"
 )
 
 // Role represents an Abiquo Rolecore.Resource
@@ -13,21 +13,21 @@ type Role struct {
 	ID            int      `json:"id,omitempty"`            // The role id
 	IDEnterprise  int      `json:"idEnterprise,omitempty"`  // The enterprise of the role
 	Name          string   `json:"name"`                    // The role name
-	DTO
+	core.DTO
 }
 
-func NewRole() Resource { return new(Role) }
+func NewRole() core.Resource { return new(Role) }
 
-func Roles(query url.Values) *Collection {
-	return NewLinker("admin/roles", "roles").Collection(query)
+func Roles(query url.Values) *core.Collection {
+	return core.NewLinker("admin/roles", "roles").Collection(query)
 }
 
 // Create posts the *Role r to the Abiquo API roles endpoint
 func (r *Role) Create() error {
-	return Create(NewLinker("admin/roles", "role"), r)
+	return core.Create(core.NewLinker("admin/roles", "role"), r)
 }
 
-func (r *Role) Privileges(query url.Values) *Collection {
+func (r *Role) Privileges(query url.Values) *core.Collection {
 	return r.Rel("privileges").Collection(query)
 }
 

@@ -1,6 +1,6 @@
 package abiquo
 
-import . "github.com/abiquo/opal/core"
+import "github.com/abiquo/opal/core"
 
 type Limit struct {
 	CPUSoft  int `json:"cpuSoft"`
@@ -18,5 +18,5 @@ type Limit struct {
 	RepoHard int `json:"repositoryHardInMb"`
 	VolHard  int `json:"volHard"`
 	VLANHard int `json:"vlansHard"`
-	DTO
+	core.DTO
 }

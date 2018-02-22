@@ -1,13 +1,13 @@
 package abiquo
 
-import . "github.com/abiquo/opal/core"
+import "github.com/abiquo/opal/core"
 
 type ActionPlan struct {
 	CreatedBy   string            `json:"createdBy,omitempty"`
 	Description string            `json:"description"`
 	Entries     []ActionPlanEntry `json:"entries"`
 	Name        string            `json:"name"`
-	DTO
+	core.DTO
 }
 
 type ActionPlanEntry struct {
@@ -18,6 +18,6 @@ type ActionPlanEntry struct {
 }
 
 // SetTriggers posts a list of lists to *a alerttriggers link
-func (a *ActionPlan) SetTriggers(d *DTO) error {
-	return Create(a.Rel("alerttriggers"), d)
+func (a *ActionPlan) SetTriggers(d *core.DTO) error {
+	return core.Create(a.Rel("alerttriggers"), d)
 }

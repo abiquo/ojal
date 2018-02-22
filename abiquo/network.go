@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/url"
 
-	. "github.com/abiquo/opal/core"
+	"github.com/abiquo/opal/core"
 )
 
 // Network represents an Abiquo API Network DTO
@@ -18,13 +18,13 @@ type Network struct {
 	Suffix  string `json:"sufixDNS,omitempty"`
 	Tag     int    `json:"tag,omitempty"`
 	TypeNet string `json:"type"`
-	DTO
+	core.DTO
 }
 
-func newNetwork() Resource { return new(Network) }
+func newNetwork() core.Resource { return new(Network) }
 
 // IPs returns a network IPs collection
-func (n *Network) IPs(query url.Values) *Collection {
+func (n *Network) IPs(query url.Values) *core.Collection {
 	return n.Rel("ips").Collection(query)
 }
 
@@ -37,5 +37,5 @@ func (n *Network) CreateIP(i *IP) error {
 	default:
 		return fmt.Errorf("CreateIP: %v ip type not implemented", n.TypeNet)
 	}
-	return Create(n.Rel("ips").SetType(media), i)
+	return core.Create(n.Rel("ips").SetType(media), i)
 }

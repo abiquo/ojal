@@ -1,6 +1,6 @@
 package abiquo
 
-import . "github.com/abiquo/opal/core"
+import "github.com/abiquo/opal/core"
 
 type LoadBalancerAddress struct {
 	Internal bool `json:"internal"`
@@ -27,9 +27,9 @@ type LoadBalancer struct {
 	Name                  string                `json:"name"`
 	LoadBalancerAddresses LoadBalancerAddresses `json:"loadBalancerAddresses"`
 	RoutingRules          RoutingRules          `json:"routingRules"`
-	DTO
+	core.DTO
 }
 
 func (l *LoadBalancer) SetRules(rules []RoutingRule) error {
-	return Update(l.Rel("rules"), &RoutingRules{rules})
+	return core.Update(l.Rel("rules"), &RoutingRules{rules})
 }

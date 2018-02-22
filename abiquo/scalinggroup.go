@@ -1,8 +1,6 @@
 package abiquo
 
-import (
-	. "github.com/abiquo/opal/core"
-)
+import "github.com/abiquo/opal/core"
 
 // ScalingGroup represents an Abiquo API Scaling group DTO
 type ScalingGroup struct {
@@ -13,7 +11,7 @@ type ScalingGroup struct {
 	Maintenance bool               `json:"maintenanceMode"`
 	ScaleIn     []ScalingGroupRule `json:"scaleInRules"`
 	ScaleOut    []ScalingGroupRule `json:"scaleOutRules"`
-	DTO
+	core.DTO
 }
 
 // ScalingGroupRule represents an Abiquo API scaling group rule DTO
@@ -21,12 +19,12 @@ type ScalingGroupRule struct {
 	NumberOfInstances int   `json:"numberOfInstances"`
 	StartTime         int64 `json:"startTime,omitempty"`
 	EndTime           int64 `json:"endTime,omitempty"`
-	DTO
+	core.DTO
 }
 
 // StartMaintenance enables the *ScalingGroup maintenance mode
 func (s *ScalingGroup) StartMaintenance() (err error) {
-	_, err = Rest(nil, Post(
+	_, err = core.Rest(nil, core.Post(
 		s.Rel("startmaintenance").Href,
 		"application/json, text/plain, */*",
 		"application/json",

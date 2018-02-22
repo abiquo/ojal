@@ -4,20 +4,20 @@ import (
 	"fmt"
 	"time"
 
-	. "github.com/abiquo/opal/core"
+	"github.com/abiquo/opal/core"
 )
 
 type Task struct {
 	UserID string `json:"userId"`
 	TaskID string `json:"taskId"`
 	State  string `json:"state"`
-	DTO
+	core.DTO
 }
 
 // NewTask creates a new Abiquo API task from the caller
-func NewTask(link *Link, media string, data interface{}) (err error) {
-	reply := new(DTO)
-	if _, err = Rest(reply, Post(
+func NewTask(link *core.Link, media string, data interface{}) (err error) {
+	reply := new(core.DTO)
+	if _, err = core.Rest(reply, core.Post(
 		link.Href,
 		"acceptedrequest",
 		media,
@@ -31,11 +31,11 @@ func NewTask(link *Link, media string, data interface{}) (err error) {
 	return
 }
 
-func taskWait(endpoint *Link) string {
+func taskWait(endpoint *core.Link) string {
 	task := new(Task)
 	for {
 		time.Sleep(10000 * time.Millisecond)
-		Read(endpoint, task)
+		core.Read(endpoint, task)
 		switch task.State {
 		case "FINISHED_SUCCESSFULLY":
 			return task.State

@@ -9,7 +9,7 @@ type IP struct {
 	ID         int    `json:"id,omitempty"`
 	IPv6       bool   `json:"ipv6"`
 	IP         string `json:"ip"`
-	*core.DTO
+	core.DTO
 }
 
 func newIP() core.Resource { return new(IP) }

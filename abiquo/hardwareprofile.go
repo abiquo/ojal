@@ -1,7 +1,7 @@
 package abiquo
 
 import (
-	. "github.com/abiquo/opal/core"
+	"github.com/abiquo/opal/core"
 )
 
 type HardwareProfile struct {
@@ -9,7 +9,7 @@ type HardwareProfile struct {
 	Name    string `json:"name"`
 	CPU     int    `json:"cpu"`
 	RAMInMB int    `json:"ramInMb"`
-	DTO
+	core.DTO
 }
 
-func newHardwareProfile() Resource { return new(HardwareProfile) }
+func newHardwareProfile() core.Resource { return new(HardwareProfile) }

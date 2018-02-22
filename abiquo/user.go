@@ -1,6 +1,6 @@
 package abiquo
 
-import . "github.com/abiquo/opal/core"
+import "github.com/abiquo/opal/core"
 
 type User struct {
 	Active      bool   `json:"active,omitempty"`
@@ -14,10 +14,10 @@ type User struct {
 	Nick        string `json:"nick,omitempty"`
 	Password    string `json:"password,omitempty"`
 	Surname     string `json:"surname,omitempty"`
-	DTO
+	core.DTO
 }
 
-func NewUser() Resource { return new(User) }
+func NewUser() core.Resource { return new(User) }
 
 func (u *User) Enterprise() (enterprise *Enterprise) {
 	if e := u.Walk("enterprise"); e != nil {

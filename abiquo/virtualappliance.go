@@ -1,17 +1,17 @@
 package abiquo
 
-import . "github.com/abiquo/opal/core"
+import "github.com/abiquo/opal/core"
 
 // VirtualAppliance represents a VAPP dto
 type VirtualAppliance struct {
 	Name string `json:"name"`
-	DTO
+	core.DTO
 }
 
 // NewVirtualAppliance returns a VirtualAppliance DTO
-func NewVirtualAppliance() Resource { return new(VirtualAppliance) }
+func NewVirtualAppliance() core.Resource { return new(VirtualAppliance) }
 
 // CreateVM creates a VM inside v
 func (v *VirtualAppliance) CreateVM(vm *VirtualMachine) error {
-	return Create(v.Rel("virtualmachines").SetType("virtualmachine"), vm)
+	return core.Create(v.Rel("virtualmachines").SetType("virtualmachine"), vm)
 }

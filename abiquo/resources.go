@@ -1,6 +1,6 @@
 package abiquo
 
-import . "github.com/abiquo/opal/core"
+import "github.com/abiquo/opal/core"
 
 type Alarm struct {
 	Active            bool   `json:"active"`
@@ -10,22 +10,22 @@ type Alarm struct {
 	Period            int    `json:"period"`
 	Statistic         string `json:"statistic"`
 	Threshold         int    `json:"threshold"`
-	DTO
+	core.DTO
 }
 
 type Alert struct {
-	Active      bool    `json:"active"`
-	Description string  `json:"description"`
-	Muted       bool    `json:"muted"`
-	Name        string  `json:"name"`
-	Alarms      []*Link `json:"alarms"`
-	DTO
+	Active      bool         `json:"active"`
+	Description string       `json:"description"`
+	Muted       bool         `json:"muted"`
+	Name        string       `json:"name"`
+	Alarms      []*core.Link `json:"alarms"`
+	core.DTO
 }
 
 type Device struct {
 	Name     string `json:"name"`
 	Endpoint string `json:"endpoint"`
-	DTO
+	core.DTO
 }
 
 type HardDisk struct {
@@ -39,7 +39,7 @@ type HardDisk struct {
 	DiskFileSize       int    `json:"diskFileSize,omitempty"`
 	SizeInMb           int    `json:"sizeInMb,omitempty"`
 	UUID               string `json:"uuid,omitempty"`
-	DTO
+	core.DTO
 }
 
 type Volume struct {
@@ -52,5 +52,5 @@ type Volume struct {
 	Description        string `json:"description,omitempty"`
 	DiskControllerType string `json:"diskControllerType,omitempty"`
 	DiskController     string `json:"diskController"`
-	DTO
+	core.DTO
 }

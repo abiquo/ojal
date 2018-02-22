@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/url"
 
-	. "github.com/abiquo/opal/core"
+	"github.com/abiquo/opal/core"
 )
 
 // Enterprise represents an Abiquo Enterprisecore.Resource
@@ -27,48 +27,48 @@ type Enterprise struct {
 	RepoHard int `json:"repositoryHardInMb"`
 	VolHard  int `json:"volHard"`
 	VLANHard int `json:"vlansHard"`
-	DTO
+	core.DTO
 }
 
-func NewEnterprise() Resource { return new(Enterprise) }
+func NewEnterprise() core.Resource { return new(Enterprise) }
 
 // Enterprises returns a slice of enterprises
-func Enterprises(query url.Values) *Collection {
-	return NewLinker("admin/enterprises", "enterprises").Collection(query)
+func Enterprises(query url.Values) *core.Collection {
+	return core.NewLinker("admin/enterprises", "enterprises").Collection(query)
 }
 
 // Create creates the requested enterprise
 func (e *Enterprise) Create() error {
-	return Create(NewLinker("admin/enterprises", "enterprise"), e)
+	return core.Create(core.NewLinker("admin/enterprises", "enterprise"), e)
 }
 
 // Users returns the *Enterprise users collection
-func (e *Enterprise) Users(query url.Values) *Collection {
+func (e *Enterprise) Users(query url.Values) *core.Collection {
 	return e.Rel("users").Collection(query)
 }
 
 // VirtualAppliances returns the *Enterprise virtualappliances collection
-func (e *Enterprise) VirtualAppliances(query url.Values) *Collection {
+func (e *Enterprise) VirtualAppliances(query url.Values) *core.Collection {
 	return e.Rel("virtualappliances").Collection(query)
 }
 
 // VirtualDatacenters returns the *Enterprise virtualdatacenters collection
-func (e *Enterprise) VirtualDatacenters(query url.Values) *Collection {
+func (e *Enterprise) VirtualDatacenters(query url.Values) *core.Collection {
 	return e.Rel("cloud/virtualdatacenters").Collection(query)
 }
 
 // VirtualMachines returns the *Enterprise virtualmachines collection
-func (e *Enterprise) VirtualMachines(query url.Values) *Collection {
+func (e *Enterprise) VirtualMachines(query url.Values) *core.Collection {
 	return e.Rel("virtualmachines").Collection(query)
 }
 
 // CreateLimit
 func (e *Enterprise) CreateLimit(l *Limit) error {
-	return Create(e.Rel("limits").SetType("limit"), l)
+	return core.Create(e.Rel("limits").SetType("limit"), l)
 }
 
 // DatacenterRepositories returns the enterprise datacenter repositories collection
-func (e *Enterprise) DatacenterRepositories(query url.Values) *Collection {
+func (e *Enterprise) DatacenterRepositories(query url.Values) *core.Collection {
 	return e.Rel("datacenterrepositories").Collection(query)
 }
 

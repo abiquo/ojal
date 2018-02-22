@@ -3,7 +3,7 @@ package abiquo
 import (
 	"net/url"
 
-	. "github.com/abiquo/opal/core"
+	"github.com/abiquo/opal/core"
 )
 
 type VirtualDatacenter struct {
@@ -25,23 +25,23 @@ type VirtualDatacenter struct {
 	Name    string   `json:"name"`
 	HVType  string   `json:"hypervisorType"`
 	Network *Network `json:"network"`
-	DTO
+	core.DTO
 }
 
-func NewVirtualDatacenter() Resource { return new(VirtualDatacenter) }
+func NewVirtualDatacenter() core.Resource { return new(VirtualDatacenter) }
 
 // Create creates a new VDC
 func (v *VirtualDatacenter) Create() error {
-	endpoint := NewLinker("cloud/virtualdatacenters", "virtualdatacenter")
-	return Create(endpoint, v)
+	endpoint := core.NewLinker("cloud/virtualdatacenters", "virtualdatacenter")
+	return core.Create(endpoint, v)
 }
 
 // CreateNetwork creates a new private network in the VDC
 func (v *VirtualDatacenter) CreateNetwork(network *Network) error {
-	return Create(v.Rel("privatenetworks").SetType("vlan"), network)
+	return core.Create(v.Rel("privatenetworks").SetType("vlan"), network)
 }
 
 // VirtualAppliances returns the list of virtualappliances inside a VirtualDatacenter
-func (v *VirtualDatacenter) VirtualAppliances(query url.Values) *Collection {
+func (v *VirtualDatacenter) VirtualAppliances(query url.Values) *core.Collection {
 	return v.Rel("virtualappliances").Collection(query)
 }

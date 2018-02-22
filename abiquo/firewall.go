@@ -1,13 +1,13 @@
 package abiquo
 
-import . "github.com/abiquo/opal/core"
+import "github.com/abiquo/opal/core"
 
 type Firewall struct {
 	Id          int    `json:"id,omitempty"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	ProviderId  string `json:"providerId,omitempty"`
-	DTO
+	core.DTO
 }
 
 type FirewallRule struct {
@@ -25,5 +25,5 @@ type FirewallRules struct {
 }
 
 func (f *Firewall) SetRules(rules *FirewallRules) error {
-	return Update(f.Rel("rules"), rules)
+	return core.Update(f.Rel("rules"), rules)
 }
