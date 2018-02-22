@@ -2,6 +2,7 @@ package abiquo_test
 
 import (
 	"fmt"
+	"os"
 	"sort"
 	"time"
 
@@ -9,12 +10,29 @@ import (
 	. "github.com/abiquo/opal/core"
 )
 
-var name = fmt.Sprint("ztest", -time.Now().Unix())
+var (
+	name        = fmt.Sprint("ztest", -time.Now().Unix())
+	environment map[string]string
+)
+
+func init() {
+	environment = map[string]string{
+		"OPAL_ENDPOINT": os.Getenv("OPAL_ENDPOINT"),
+		"OPAL_USERNAME": os.Getenv("OPAL_USERNAME"),
+		"OPAL_PASSWORD": os.Getenv("OPAL_PASSWORD"),
+	}
+
+	for k, v := range environment {
+		if v == "" {
+			panic(k + " environment variable should not be empty")
+		}
+	}
+}
 
 func ExampleInit() {
-	err := Abiquo("https://testing:443/api", Basic{
-		Username: "admin",
-		Password: "xabiquo",
+	err := Abiquo(environment["OPAL_ENDPOINT"], Basic{
+		Username: environment["OPAL_USERNAME"],
+		Password: environment["OPAL_PASSWORD"],
 	})
 
 	fmt.Println(err)
@@ -41,7 +59,7 @@ func ExampleCollection() {
 // ExampleCategories shows how to list all the categories
 func ExampleCategories() {
 	category := Categories(nil).Find(func(r Resource) bool {
-		return r.(*Category).Name == "opal"
+		return r.(*Category).Name == "Others"
 	})
 	fmt.Println(category != nil)
 
@@ -157,7 +175,7 @@ func ExampleDatacenter() {
 }
 
 func ExampleVirtualMachine_Deploy() {
-	endpoint := NewLink("cloud/virtualdatacenters/22/virtualappliances/21")
+	endpoint := NewLink("cloud/virtualdatacenters/1/virtualappliances/1")
 	template := NewLinkType("admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates/1", "virtualmachinetemplate")
 	vapp := endpoint.SetType("virtualappliance").Walk().(*VirtualAppliance)
 	vm := &VirtualMachine{

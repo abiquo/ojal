@@ -12,5 +12,3 @@ type Rack struct {
 	Reserved  int    `json:"vlanPerVdcReserved,omitempty"`
 	core.DTO
 }
-
-func newRack() core.Resource { return new(Rack) }

@@ -21,8 +21,6 @@ type Network struct {
 	core.DTO
 }
 
-func newNetwork() core.Resource { return new(Network) }
-
 // IPs returns a network IPs collection
 func (n *Network) IPs(query url.Values) *core.Collection {
 	return n.Rel("ips").Collection(query)

@@ -7,8 +7,6 @@ type FitPolicy struct {
 	core.DTO
 }
 
-func NewFitPolicy() core.Resource { return new(FitPolicy) }
-
 type MachineLoadRule struct {
 	Aggregated        bool `json:"aggregated"`
 	CPULoadPercentage int  `json:"cpuLoadPercentage"`
@@ -16,14 +14,10 @@ type MachineLoadRule struct {
 	core.DTO
 }
 
-func NewMachineLoadRule() core.Resource { return new(MachineLoadRule) }
-
 type DatastoreLoadRule struct {
 	StorageLoadPercentage int `json:"storageLoadPercentage"`
 	core.DTO
 }
-
-func NewDatastoreLoadRule() core.Resource { return new(DatastoreLoadRule) }
 
 type Rules struct {
 	DatastoreLoadRules struct {

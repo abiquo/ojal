@@ -15,8 +15,6 @@ type RemoteService struct {
 	core.DTO
 }
 
-func newRemoteService() core.Resource { return new(RemoteService) }
-
 func RemoteServices(q url.Values) *core.Collection {
 	return core.NewLinker("admin/remoteservices", "remoteservices").Collection(q)
 }

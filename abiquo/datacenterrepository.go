@@ -14,8 +14,6 @@ type DatacenterRepository struct {
 	core.DTO
 }
 
-func newDatacenterRepository() core.Resource { return new(DatacenterRepository) }
-
 // Templates returns the Datacenter Repository Virtual Machine templates collection
 func (d *DatacenterRepository) VirtualMachineTemplates(query url.Values) *core.Collection {
 	return d.Rel("virtualmachinetemplates").Collection(query)

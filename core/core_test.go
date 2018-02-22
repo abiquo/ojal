@@ -30,8 +30,6 @@ type dto struct {
 	core.DTO
 }
 
-func newTenant() core.Resource { return new(dto) }
-
 var (
 	basic       core.Basic
 	oauth       core.Oauth
@@ -78,6 +76,8 @@ func init() {
 	}
 }
 
+func newDTO() core.Resource { return new(dto) }
+
 func TestInit(t *testing.T) {
 	err0 := core.Init("https://fail:443/api", core.Basic{})
 	err1 := core.Init(environment["OPAL_ENDPOINT"], core.Basic{})
@@ -103,10 +103,8 @@ func TestInit(t *testing.T) {
 	enterprise0 = &dto{Name: name0}
 	enterprise1 = &dto{Name: name1}
 	result = &dto{}
-	core.RegisterResource("enterprise", newTenant)
-	core.RegisterResource("user", newTenant)
-	core.RegisterCollection("enterprises", newTenant)
-	core.RegisterCollection("user", newTenant)
+	core.RegisterMedia("enterprise", "enterprises", newDTO)
+	core.RegisterMedia("user", "users", newDTO)
 }
 
 func ExampleLink() {
@@ -116,7 +114,7 @@ func ExampleLink() {
 	fmt.Println(none.Media())
 
 	// Output:
-	// https://testing:443/api/none
+	// https://test:443/api/none
 	// none
 	// none
 	// application/vnd.abiquo.none+json
@@ -208,9 +206,9 @@ func ExampleHref() {
 	fmt.Println(core.Resolve("admin/rules", url.Values{"idDatacenter": {"1"}}))
 
 	// Output:
-	// https://testing:443/api/
-	// https://testing:443/api/admin/rules
-	// https://testing:443/api/admin/rules?idDatacenter=1
+	// https://test:443/api/
+	// https://test:443/api/admin/rules
+	// https://test:443/api/admin/rules?idDatacenter=1
 }
 
 func ExampleType() {
@@ -226,7 +224,7 @@ func ExampleType() {
 
 func ExampleUpload() {
 	ova := "/home/antxon/Downloads/test.ova"
-	templates := "https://testing:443/am/erepos/1/templates"
+	templates := "https://test:443/am/erepos/1/templates"
 	reply, err := core.Upload(templates, ova)
 
 	fmt.Println(err)

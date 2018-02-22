@@ -14,8 +14,6 @@ type Datastore struct {
 	core.DTO
 }
 
-func newDatastore() core.Resource { return new(Datastore) }
-
 type DatastoreTier struct {
 	DefaultAllowed          bool   `json:"defaultAllowed"`
 	DefaultForDatacenter    bool   `json:"defaultForDatacenter"`
@@ -25,5 +23,3 @@ type DatastoreTier struct {
 	StorageAllocationPolicy string `json:"storageAllocationPolicy"`
 	core.DTO
 }
-
-func newDatastoreTier() core.Resource { return new(DatastoreTier) }

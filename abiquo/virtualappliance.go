@@ -8,9 +8,6 @@ type VirtualAppliance struct {
 	core.DTO
 }
 
-// NewVirtualAppliance returns a VirtualAppliance DTO
-func NewVirtualAppliance() core.Resource { return new(VirtualAppliance) }
-
 // CreateVM creates a VM inside v
 func (v *VirtualAppliance) CreateVM(vm *VirtualMachine) error {
 	return core.Create(v.Rel("virtualmachines").SetType("virtualmachine"), vm)

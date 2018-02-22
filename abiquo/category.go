@@ -15,9 +15,6 @@ type Category struct {
 	core.DTO
 }
 
-// NewCategory category retuns an new Abiquo API Category DTO
-func NewCategory() core.Resource { return new(Category) }
-
 func Categories(query url.Values) *core.Collection {
 	return core.NewLinker("config/categories", "categories").Collection(query)
 }

@@ -15,8 +15,6 @@ type License struct {
 	core.DTO
 }
 
-func newLicense() core.Resource { return new(License) }
-
 func Licenses(query url.Values) *core.Collection {
 	return core.NewLinker("config/licenses", "licenses").Collection(query)
 }

@@ -24,6 +24,3 @@ type VirtualMachineTemplate struct {
 	Variables                        interface{} `json:"variables,omitempty"`
 	core.DTO
 }
-
-// NewVirtualMachineTemplate returns a new Abiquo API virtual machine template DTO
-func NewVirtualMachineTemplate() core.Resource { return new(VirtualMachineTemplate) }

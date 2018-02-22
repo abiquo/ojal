@@ -8,5 +8,3 @@ type NetworkServiceType struct {
 	Name    string `json:"name"`
 	core.DTO
 }
-
-func newNetworkServiceType() core.Resource { return new(NetworkServiceType) }

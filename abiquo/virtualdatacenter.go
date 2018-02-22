@@ -28,8 +28,6 @@ type VirtualDatacenter struct {
 	core.DTO
 }
 
-func NewVirtualDatacenter() core.Resource { return new(VirtualDatacenter) }
-
 // Create creates a new VDC
 func (v *VirtualDatacenter) Create() error {
 	endpoint := core.NewLinker("cloud/virtualdatacenters", "virtualdatacenter")

@@ -11,5 +11,3 @@ type IP struct {
 	IP         string `json:"ip"`
 	core.DTO
 }
-
-func newIP() core.Resource { return new(IP) }

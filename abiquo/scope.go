@@ -24,8 +24,6 @@ type Scope struct {
 	core.DTO
 }
 
-func newScope() core.Resource { return new(Scope) }
-
 func (s *Scope) Create() error {
 	return core.Create(core.NewLinker("admin/scopes", "scope"), s)
 }

@@ -30,8 +30,6 @@ type Enterprise struct {
 	core.DTO
 }
 
-func NewEnterprise() core.Resource { return new(Enterprise) }
-
 // Enterprises returns a slice of enterprises
 func Enterprises(query url.Values) *core.Collection {
 	return core.NewLinker("admin/enterprises", "enterprises").Collection(query)

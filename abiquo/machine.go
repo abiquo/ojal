@@ -36,5 +36,3 @@ type Machine struct {
 	User     string `json:"user"`
 	core.DTO
 }
-
-func newMachine() core.Resource { return new(Machine) }

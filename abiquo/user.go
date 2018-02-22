@@ -17,8 +17,6 @@ type User struct {
 	core.DTO
 }
 
-func NewUser() core.Resource { return new(User) }
-
 func (u *User) Enterprise() (enterprise *Enterprise) {
 	if e := u.Walk("enterprise"); e != nil {
 		enterprise = e.(*Enterprise)

@@ -14,8 +14,6 @@ type Privilege struct {
 	core.DTO
 }
 
-func newPrivilege() core.Resource { return new(Privilege) }
-
 // Privileges retuns the API privileges collection
 func Privileges(query url.Values) *core.Collection {
 	return core.NewLinker("config/privileges", "privileges").Collection(query)

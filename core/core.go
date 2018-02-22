@@ -22,16 +22,18 @@ var validCodes = map[string]map[int]bool{
 	},
 }
 
-var collections = map[string]func() Resource{}
+var (
+	collections = map[string]func() Resource{}
+	resources   = map[string]func() Resource{}
+)
 
-// RegisterCollection sets the Resource factory for the media collection
-func RegisterCollection(media string, factory func() Resource) {
-	collections[Media(media)] = factory
+// RegisterMedia sets the Resource factory for the media collection
+func RegisterMedia(media, collection string, factory func() Resource) {
+	resources[Media(media)] = factory
+	collections[Media(collection)] = factory
 }
 
-var resources = map[string]func() Resource{}
-
-// RegisterResource sets the Resource factory for the media collection
-func RegisterResource(media string, factory func() Resource) {
-	resources[Media(media)] = factory
+// Factory returns a resource of the specified media type
+func Factory(media string) Resource {
+	return resources[Media(media)]()
 }

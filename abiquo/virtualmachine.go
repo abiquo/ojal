@@ -28,8 +28,6 @@ type VirtualMachineMetadataFields struct {
 	StartupScript string `json:"startup-script,omitempty"`
 }
 
-func NewVirtualMachine() core.Resource { return new(VirtualMachine) }
-
 // Reconfigure reconfigures v
 func (v *VirtualMachine) Reconfigure() (err error) {
 	_, err = core.Rest(v, core.Put(v.URL(), "acceptedrequest", v.Media(), v))

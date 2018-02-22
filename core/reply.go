@@ -34,6 +34,9 @@ func (r *Reply) Ok() (ok bool) {
 
 // Location returns an http.Response location values
 func (r *Reply) Location() (location string) {
+	if r == nil {
+		return
+	}
 	if href, err := r.Response.Location(); err == nil {
 		location = href.String()
 	}

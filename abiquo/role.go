@@ -16,8 +16,6 @@ type Role struct {
 	core.DTO
 }
 
-func NewRole() core.Resource { return new(Role) }
-
 func Roles(query url.Values) *core.Collection {
 	return core.NewLinker("admin/roles", "roles").Collection(query)
 }

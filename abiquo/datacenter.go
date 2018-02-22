@@ -18,9 +18,6 @@ type Datacenter struct {
 	core.DTO
 }
 
-// NewDatacenter returns a new Abiquo API Datacenter DTO
-func newDatacenter() core.Resource { return new(Datacenter) }
-
 // Datacenters returns the Abiquo API datacenters collection
 func Datacenters(query url.Values) *core.Collection {
 	return core.NewLinker("admin/datacenters", "datacenters").Collection(query)
