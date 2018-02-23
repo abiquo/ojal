@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/abiquo/opal/core"
+	"github.com/abiquo/ojal/core"
 )
 
 // DatacenterRepository represents an Abiquo API DatacenterRepository DTO

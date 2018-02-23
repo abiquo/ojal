@@ -1,6 +1,6 @@
 package abiquo
 
-import "github.com/abiquo/opal/core"
+import "github.com/abiquo/ojal/core"
 
 // ScalingGroup represents an Abiquo API Scaling group DTO
 type ScalingGroup struct {

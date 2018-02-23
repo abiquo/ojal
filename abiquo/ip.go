@@ -1,6 +1,6 @@
 package abiquo
 
-import "github.com/abiquo/opal/core"
+import "github.com/abiquo/ojal/core"
 
 // IP represents an Abiquo API IP DTO
 type IP struct {

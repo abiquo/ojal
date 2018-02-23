@@ -3,7 +3,7 @@ package abiquo
 import (
 	"net/url"
 
-	"github.com/abiquo/opal/core"
+	"github.com/abiquo/ojal/core"
 )
 
 // Datacenter represents an Abiquo API datacentercore.Resource

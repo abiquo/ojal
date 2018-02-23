@@ -1,7 +1,7 @@
 package abiquo
 
 import (
-	"github.com/abiquo/opal/core"
+	"github.com/abiquo/ojal/core"
 )
 
 // VirtualDatacenter represents an Abiquo API Virtual datacenter DTO

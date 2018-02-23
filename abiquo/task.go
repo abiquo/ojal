@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/abiquo/opal/core"
+	"github.com/abiquo/ojal/core"
 )
 
 type Task struct {

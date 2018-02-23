@@ -1,6 +1,6 @@
 package abiquo
 
-import "github.com/abiquo/opal/core"
+import "github.com/abiquo/ojal/core"
 
 type Datastore struct {
 	DatastoreUUID string `json:"datastoreUUID"`

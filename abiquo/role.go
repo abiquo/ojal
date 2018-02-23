@@ -3,7 +3,7 @@ package abiquo
 import (
 	"net/url"
 
-	"github.com/abiquo/opal/core"
+	"github.com/abiquo/ojal/core"
 )
 
 // Role represents an Abiquo Rolecore.Resource

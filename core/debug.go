@@ -9,7 +9,7 @@ var logger *log.Logger
 
 func init() {
 	if _, ok := os.LookupEnv("OPAL_DEBUG"); ok {
-		file, err := os.OpenFile("opal", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
+		file, err := os.OpenFile("ojal", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 		if err != nil {
 			panic(err)
 		}

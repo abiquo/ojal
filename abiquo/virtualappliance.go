@@ -1,6 +1,6 @@
 package abiquo
 
-import "github.com/abiquo/opal/core"
+import "github.com/abiquo/ojal/core"
 
 // VirtualAppliance represents a VAPP dto
 type VirtualAppliance struct {

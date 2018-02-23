@@ -3,7 +3,7 @@ package abiquo
 import (
 	"fmt"
 
-	"github.com/abiquo/opal/core"
+	"github.com/abiquo/ojal/core"
 )
 
 // Network represents an Abiquo API Network DTO

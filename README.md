@@ -1,18 +1,18 @@
 # Install
 
 ```
-go get github.com/abiquo/opal
+go get github.com/abiquo/ojal
 ```
 
 # Test
 
 ```
-go test -v opal
+go test -v ojal
 ```
 
 # Documentation
 
 ```
 godoc -http=:6060 -q &
-firefox http://localhost:6060/pkg/github.com/abiquo/opal/
+firefox http://localhost:6060/pkg/github.com/abiquo/ojal/
 ```

@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/abiquo/opal/core"
+	"github.com/abiquo/ojal/core"
 )
 
 type battery []*struct {

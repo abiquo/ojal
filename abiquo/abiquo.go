@@ -3,7 +3,7 @@ package abiquo
 import (
 	"sync"
 
-	"github.com/abiquo/opal/core"
+	"github.com/abiquo/ojal/core"
 )
 
 var (
