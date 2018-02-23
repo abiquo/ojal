@@ -8,6 +8,13 @@ import (
 )
 
 // Enterprise represents an Abiquo Enterprisecore.Resource
+//
+// Collections:
+// - users
+// - virtualappliances
+// - virtualdatacenters
+// - virtualmachines
+// - datacenterrepositories
 type Enterprise struct {
 	ID   int    `json:"id,omitempty"` // The enterprise unique ID
 	Name string `json:"name"`         // The name of the enterprise
@@ -40,42 +47,14 @@ func (e *Enterprise) Create() error {
 	return core.Create(core.NewLinker("admin/enterprises", "enterprise"), e)
 }
 
-// Users returns the *Enterprise users collection
-func (e *Enterprise) Users(query url.Values) *core.Collection {
-	return e.Rel("users").Collection(query)
-}
-
-// VirtualAppliances returns the *Enterprise virtualappliances collection
-func (e *Enterprise) VirtualAppliances(query url.Values) *core.Collection {
-	return e.Rel("virtualappliances").Collection(query)
-}
-
-// VirtualDatacenters returns the *Enterprise virtualdatacenters collection
-func (e *Enterprise) VirtualDatacenters(query url.Values) *core.Collection {
-	return e.Rel("cloud/virtualdatacenters").Collection(query)
-}
-
-// VirtualMachines returns the *Enterprise virtualmachines collection
-func (e *Enterprise) VirtualMachines(query url.Values) *core.Collection {
-	return e.Rel("virtualmachines").Collection(query)
-}
-
 // CreateLimit
 func (e *Enterprise) CreateLimit(l *Limit) error {
 	return core.Create(e.Rel("limits").SetType("limit"), l)
 }
 
-// DatacenterRepositories returns the enterprise datacenter repositories collection
-func (e *Enterprise) DatacenterRepositories(query url.Values) *core.Collection {
-	return e.Rel("datacenterrepositories").Collection(query)
-}
-
-// ExampleEnterprise show all enterprises virtualmachines
+// ExampleEnterprise show all enterprises names
 func ExampleEnterprise() {
 	for _, e := range Enterprises(nil).List() {
-		enterprise := e.(*Enterprise)
-		for _, v := range enterprise.VirtualMachines(nil).List() {
-			fmt.Println(v.URL())
-		}
+		fmt.Println(e.URL())
 	}
 }

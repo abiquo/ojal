@@ -15,6 +15,7 @@ type Category struct {
 	core.DTO
 }
 
+// Categories returns the platform categories collection
 func Categories(query url.Values) *core.Collection {
 	return core.NewLinker("config/categories", "categories").Collection(query)
 }

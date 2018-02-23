@@ -7,6 +7,11 @@ import (
 )
 
 // Datacenter represents an Abiquo API datacentercore.Resource
+//
+// Collections:
+// - networks
+// - hardwareprofiles
+// - discover
 type Datacenter struct {
 	ID             int    `json:"id,omitempty"`
 	Location       string `json:"location"`
@@ -26,19 +31,4 @@ func Datacenters(query url.Values) *core.Collection {
 // CreateExternal creates a new external network in the datacenter
 func (d *Datacenter) CreateExternal(external *Network) (err error) {
 	return core.Create(d.Rel("network").SetType("vlan"), external)
-}
-
-// Networks returns a Datacenter Networks
-func (d *Datacenter) Networks(query url.Values) *core.Collection {
-	return d.Rel("network").Collection(query)
-}
-
-// HardwareProfiles returns a location hardware profiles list
-func (d *Datacenter) HardwareProfiles(query url.Values) *core.Collection {
-	return d.Rel("hardwareprofiles").Collection(query)
-}
-
-// Discover returns the datacenter discover action Values
-func (d *Datacenter) Discover(q url.Values) *core.Collection {
-	return d.Rel("discover").Collection(q)
 }

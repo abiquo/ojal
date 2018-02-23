@@ -7,6 +7,9 @@ import (
 )
 
 // Role represents an Abiquo Rolecore.Resource
+//
+// Collections:
+// - privileges
 type Role struct {
 	Blocked       bool     `json:"blocked"`
 	ExternalRoles []string `json:"externalRoles,omitempty"` // PENDING
@@ -23,10 +26,6 @@ func Roles(query url.Values) *core.Collection {
 // Create posts the *Role r to the Abiquo API roles endpoint
 func (r *Role) Create() error {
 	return core.Create(core.NewLinker("admin/roles", "role"), r)
-}
-
-func (r *Role) Privileges(query url.Values) *core.Collection {
-	return r.Rel("privileges").Collection(query)
 }
 
 // AddPrivilege adds the *Privilege rel privilege link to the *Role

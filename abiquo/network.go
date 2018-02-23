@@ -2,12 +2,14 @@ package abiquo
 
 import (
 	"fmt"
-	"net/url"
 
 	"github.com/abiquo/opal/core"
 )
 
 // Network represents an Abiquo API Network DTO
+//
+// Collections:
+// - ips
 type Network struct {
 	Address string `json:"address"`
 	DNS1    string `json:"primaryDNS,omitempty"`
@@ -19,11 +21,6 @@ type Network struct {
 	Tag     int    `json:"tag,omitempty"`
 	TypeNet string `json:"type"`
 	core.DTO
-}
-
-// IPs returns a network IPs collection
-func (n *Network) IPs(query url.Values) *core.Collection {
-	return n.Rel("ips").Collection(query)
 }
 
 // CreateIP creates the provided IP in the Network

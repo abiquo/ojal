@@ -1,11 +1,13 @@
 package abiquo
 
 import (
-	"net/url"
-
 	"github.com/abiquo/opal/core"
 )
 
+// VirtualDatacenter represents an Abiquo API Virtual datacenter DTO
+//
+// Collections:
+// - virtualappliances
 type VirtualDatacenter struct {
 	// Soft limits
 	CPUSoft     int `json:"cpuSoft"`
@@ -37,9 +39,4 @@ func (v *VirtualDatacenter) Create() error {
 // CreateNetwork creates a new private network in the VDC
 func (v *VirtualDatacenter) CreateNetwork(network *Network) error {
 	return core.Create(v.Rel("privatenetworks").SetType("vlan"), network)
-}
-
-// VirtualAppliances returns the list of virtualappliances inside a VirtualDatacenter
-func (v *VirtualDatacenter) VirtualAppliances(query url.Values) *core.Collection {
-	return v.Rel("virtualappliances").Collection(query)
 }

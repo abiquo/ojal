@@ -145,7 +145,6 @@ func ExampleDatacenter() {
 	dc := new(Datacenter)
 	endpoint := NewLinkType("admin/datacenters/1", "datacenter")
 	read := Read(endpoint, dc)
-	netsStart := dc.Networks(nil).Size()
 	network := &Network{
 		Mask:    24,
 		Address: "172.16.45.0",
@@ -158,20 +157,14 @@ func ExampleDatacenter() {
 			NewLinkType("admin/datacenters/1/networkservicetypes/1", "networkservicetype").SetRel("networkservicetype"),
 		),
 	}
-	create := dc.CreateExternal(network)
-	remove := Remove(network)
-	netsEnd := dc.Networks(nil).Size()
-
 	fmt.Println(read)
-	fmt.Println(create)
-	fmt.Println(remove)
-	fmt.Println(netsStart == netsEnd)
+	fmt.Println(dc.CreateExternal(network))
+	fmt.Println(Remove(network))
 
 	// Output:
 	// <nil>
 	// <nil>
 	// <nil>
-	// true
 }
 
 func ExampleVirtualMachine_Deploy() {
