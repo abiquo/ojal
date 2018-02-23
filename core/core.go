@@ -1,6 +1,9 @@
 package core
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
 var validCodes = map[string]map[int]bool{
 	http.MethodDelete: map[int]bool{
@@ -23,17 +26,20 @@ var validCodes = map[string]map[int]bool{
 }
 
 var (
-	collections = map[string]func() Resource{}
+	collections = map[string]string{}
 	resources   = map[string]func() Resource{}
 )
 
 // RegisterMedia sets the Resource factory for the media collection
 func RegisterMedia(media, collection string, factory func() Resource) {
+	collections[Media(collection)] = Media(media)
 	resources[Media(media)] = factory
-	collections[Media(collection)] = factory
 }
 
 // Factory returns a resource of the specified media type
 func Factory(media string) Resource {
-	return resources[Media(media)]()
+	if factory := resources[Media(media)]; factory != nil {
+		return factory()
+	}
+	panic(fmt.Errorf("unregistered media %q", media))
 }

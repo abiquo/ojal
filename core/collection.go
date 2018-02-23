@@ -2,7 +2,6 @@ package core
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/url"
 )
 
@@ -32,12 +31,9 @@ func (c *Collection) Size() int { return c.size() }
 func NewCollection(link *Link, query url.Values) (collection *Collection) {
 	next := link
 	page := new(page)
-	constructor := collections[link.Type]
-	if constructor == nil {
-		panic(fmt.Errorf("NewCollection: Unregistered %q collection", link.Type))
-	}
+	media := collections[link.Type]
 	factory := func(raw json.RawMessage) (resource Resource) {
-		resource = constructor()
+		resource = Factory(media)
 		json.Unmarshal(raw, resource)
 		return
 	}

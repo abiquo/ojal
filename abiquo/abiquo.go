@@ -9,32 +9,32 @@ import (
 var (
 	initialize sync.Once
 	collection = map[string]string{
-		"category":               "categories",
-		"datacenter":             "datacenters",
-		"datacenterrepository":   "datacenterrepositories",
-		"datastoreloadrule":      "datastoreloadrules",
-		"datastore":              "datastores",
-		"datastoretier":          "datastoretiers",
-		"enterprise":             "enterprises",
-		"fitpolicyrule":          "fitpolicyrules",
-		"hardwareprofile":        "hardwareprofiles",
-		"ip":                     "ips",
-		"license":                "licenses",
-		"machineloadrule":        "machineloadrules",
-		"machine":                "machines",
-		"networkservicetype":     "networkservicetypes",
-		"privilege":              "privileges",
-		"publiccloudregion":      "publiccloudregions",
-		"rack":                   "racks",
-		"remoteservice":          "remoteservices",
-		"role":                   "roles",
-		"scope":                  "scopes",
-		"user":                   "users",
-		"vlan":                   "vlans",
-		"virtualappliance":       "virtualappliances",
-		"virtualdatacenter":      "virtualdatacenters",
-		"virtualmachine":         "virtualmachines",
-		"virtualmachinetemplate": "virtualmachinetemplates",
+		"categories":              "category",
+		"datacenters":             "datacenter",
+		"datacenterrepositories":  "datacenterrepository",
+		"datastoreloadrules":      "datastoreloadrule",
+		"datastores":              "datastore",
+		"datastoretiers":          "datastoretier",
+		"enterprises":             "enterprise",
+		"fitpolicyrules":          "fitpolicyrule",
+		"hardwareprofiles":        "hardwareprofile",
+		"ips":                     "ip",
+		"licenses":                "license",
+		"machineloadrules":        "machineloadrule",
+		"machines":                "machine",
+		"networkservicetypes":     "networkservicetype",
+		"privileges":              "privilege",
+		"publiccloudregions":      "publiccloudregion",
+		"racks":                   "rack",
+		"remoteservices":          "remoteservice",
+		"roles":                   "role",
+		"scopes":                  "scope",
+		"users":                   "user",
+		"vlans":                   "vlan",
+		"virtualappliances":       "virtualappliance",
+		"virtualdatacenters":      "virtualdatacenter",
+		"virtualmachines":         "virtualmachine",
+		"virtualmachinetemplates": "virtualmachinetemplate",
 	}
 
 	resource = map[string]func() core.Resource{
@@ -73,8 +73,8 @@ func Abiquo(api string, credentials interface{}) (err error) {
 		if err = core.Init(api, credentials); err != nil {
 			return
 		}
-		for media, factory := range resource {
-			core.RegisterMedia(media, collection[media], factory)
+		for collection, media := range collection {
+			core.RegisterMedia(media, collection, resource[media])
 		}
 	})
 	return
