@@ -9,12 +9,14 @@ import (
 var (
 	initialize sync.Once
 	collection = map[string]string{
+		"backuppolicies":          "backuppolicy",
 		"categories":              "category",
 		"datacenters":             "datacenter",
 		"datacenterrepositories":  "datacenterrepository",
 		"datastoreloadrules":      "datastoreloadrule",
 		"datastores":              "datastore",
 		"datastoretiers":          "datastoretier",
+		"devices":                 "device",
 		"enterprises":             "enterprise",
 		"fitpolicyrules":          "fitpolicyrule",
 		"hardwareprofiles":        "hardwareprofile",
@@ -38,12 +40,14 @@ var (
 	}
 
 	resource = map[string]func() core.Resource{
+		"backuppolicy":           func() core.Resource { return new(BackupPolicy) },
 		"category":               func() core.Resource { return new(Category) },
 		"datacenter":             func() core.Resource { return new(Datacenter) },
 		"datacenterrepository":   func() core.Resource { return new(DatacenterRepository) },
 		"datastore":              func() core.Resource { return new(Datastore) },
 		"datastoreloadrule":      func() core.Resource { return new(DatastoreLoadRule) },
 		"datastoretier":          func() core.Resource { return new(DatastoreTier) },
+		"device":                 func() core.Resource { return new(Device) },
 		"enterprise":             func() core.Resource { return new(Enterprise) },
 		"fitpolicyrule":          func() core.Resource { return new(FitPolicy) },
 		"hardwareprofile":        func() core.Resource { return new(HardwareProfile) },
@@ -70,11 +74,10 @@ var (
 // Abiquo initializes the Abiquo API client and registers the known collections
 func Abiquo(api string, credentials interface{}) (err error) {
 	initialize.Do(func() {
-		if err = core.Init(api, credentials); err != nil {
-			return
-		}
-		for collection, media := range collection {
-			core.RegisterMedia(media, collection, resource[media])
+		if err = core.Init(api, credentials); err == nil {
+			for collection, media := range collection {
+				core.RegisterMedia(media, collection, resource[media])
+			}
 		}
 	})
 	return

@@ -9,6 +9,7 @@ import (
 // Datacenter represents an Abiquo API datacentercore.Resource
 //
 // Collections:
+// - backuppolicies
 // - networks
 // - hardwareprofiles
 // - discover
