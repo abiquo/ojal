@@ -22,16 +22,6 @@ type Alert struct {
 	core.DTO
 }
 
-// Device represents a network SDN device DTO
-type Device struct {
-	Default  string `json:"vdcDefault"`
-	Endpoint string `json:"endpoint"`
-	Name     string `json:"name"`
-	Password string `json:"password"`
-	Username string `json:"user"`
-	core.DTO
-}
-
 type HardDisk struct {
 	Id                 int    `json:"id,omitempty"`
 	Label              string `json:"label,omitempty"`
