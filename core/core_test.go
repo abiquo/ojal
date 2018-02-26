@@ -120,6 +120,37 @@ func ExampleLink() {
 	// application/vnd.abiquo.none+json
 }
 
+func TestObject(t *testing.T) {
+	object := make(core.Object)
+
+	battery{
+		{"Href()", object.Href(), ""},
+		{"Media()", object.Media(), core.Media("")},
+		{"len(Links())", len(object.Links()), 0},
+	}.Run("zero", t)
+
+	object.Add(none)
+	battery{
+		{"Href()", object.Href(), ""},
+		{"Media()", object.Media(), core.Media("")},
+		{"len(Links())", len(object.Links()), 1},
+	}.Run("zero", t)
+
+	object.Add(self)
+	battery{
+		{"Href()", object.Href(), self.Href},
+		{"Media()", object.Media(), self.Media()},
+		{"len(Links())", len(object.Links()), 2},
+	}.Run("self", t)
+
+	object.Add(edit)
+	battery{
+		{"Href()", object.Href(), edit.Href},
+		{"Media()", object.Media(), edit.Media()},
+		{"len(Links())", len(object.Links()), 3},
+	}.Run("edit", t)
+}
+
 func TestCall(t *testing.T) {
 	post, err := core.Rest(result, core.Post(
 		"admin/enterprises",
