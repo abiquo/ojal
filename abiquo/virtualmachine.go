@@ -14,6 +14,7 @@ type VirtualMachine struct {
 	Monitored bool              `json:"monitored"`
 	Name      string            `json:"name,omitempty"`
 	RAM       int               `json:"ram,omitempty"`
+	State     string            `json:"state,omitempty"`
 	Variables map[string]string `json:"variables,omitempty"`
 	UUID      string            `json:"uuid,omitempty"`
 	core.DTO
