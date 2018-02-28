@@ -1,14 +1,11 @@
 package abiquo
 
 import (
-	"sync"
-
 	"github.com/abiquo/ojal/core"
 )
 
-var (
-	initialize sync.Once
-	collection = map[string]string{
+func init() {
+	collections := map[string]string{
 		"backuppolicies":          "backuppolicy",
 		"categories":              "category",
 		"datacenters":             "datacenter",
@@ -40,7 +37,7 @@ var (
 		"virtualmachinetemplates": "virtualmachinetemplate",
 	}
 
-	resource = map[string]func() core.Resource{
+	resources := map[string]func() core.Resource{
 		"backuppolicy":           func() core.Resource { return new(BackupPolicy) },
 		"category":               func() core.Resource { return new(Category) },
 		"datacenter":             func() core.Resource { return new(Datacenter) },
@@ -71,25 +68,16 @@ var (
 		"virtualmachine":         func() core.Resource { return new(VirtualMachine) },
 		"virtualmachinetemplate": func() core.Resource { return new(VirtualMachineTemplate) },
 	}
-)
 
-// Abiquo initializes the Abiquo API client and registers the known collections
-func Abiquo(api string, credentials interface{}) (err error) {
-	initialize.Do(func() {
-		if err = core.Init(api, credentials); err == nil {
-			for collection, media := range collection {
-				core.RegisterMedia(media, collection, resource[media])
-			}
-		}
-	})
-	return
+	for collection, media := range collections {
+		core.RegisterMedia(media, collection, resources[media])
+	}
 }
 
 // Login returns the User resource for the client credentials
 func Login() (user *User) {
-	u := new(User)
-	if err := core.Read(core.NewLinker("login", "user"), u); err == nil {
-		user = u
+	if resource := core.NewLinker("login", "user").Walk(); resource != nil {
+		user = resource.(*User)
 	}
 	return
 }
