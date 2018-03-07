@@ -8,7 +8,9 @@ import (
 
 // VirtualMachine represents an Abiquo API VMcore.Resource
 type VirtualMachine struct {
+	Backups   []BackupPolicy    `json:"backupPolicies,omitempty"`
 	CPU       int               `json:"cpu,omitempty"`
+	ID        int               `json:"id,omitempty"`
 	Label     string            `json:"label,omitempty"`
 	Metadata  string            `json:"metadata,omitempty"`
 	Monitored bool              `json:"monitored"`
@@ -70,30 +72,17 @@ func (v *VirtualMachine) SetMetadata(metadata *VirtualMachineMetadata) error {
 	return core.Update(v.Rel("metadata"), metadata)
 }
 
-func filterLinks(l []*core.Link, filter func(link *core.Link) bool) (links []*core.Link) {
-	for _, link := range l {
-		if filter(link) {
-			links = append(links, link)
-		}
-	}
-	return
-}
-
-func isLink(l *core.Link, media string) bool {
-	return l.Type == core.Media(media)
-}
-
 // Disks returns an slice with the VM disk links
 func (v *VirtualMachine) Disks() []*core.Link {
-	return filterLinks(v.Links, func(l *core.Link) bool {
-		return isLink(l, "harddisk") || isLink(l, "volume")
+	return v.Links.Filter(func(l *core.Link) bool {
+		return l.IsMedia("harddisk") || l.IsMedia("volume")
 	})
 }
 
 // NICs returns an slice with the VM NIC links
 func (v *VirtualMachine) NICs() (nics []*core.Link) {
-	return filterLinks(v.Links, func(l *core.Link) bool {
-		return isLink(l, "privateip") || isLink(l, "externalip") || isLink(l, "publicip")
+	return v.Links.Filter(func(l *core.Link) bool {
+		return l.IsMedia("privateip") || l.IsMedia("externalip") || l.IsMedia("publicip")
 	})
 }
 
