@@ -10,10 +10,12 @@ type BackupManager struct {
 	Password string `json:"password"`
 }
 
-type BackupPolicyConfiguration struct {
-	Subtype string `json:"subtype"`
-	Time    string `json:"time"`
-	Type    string `jswon:"type"`
+type BackupConfiguration struct {
+	Subtype string   `json:"subtype"`
+	Time    string   `json:"time"`
+	Type    string   `json:"type"`
+	Days    []string `json:"days,omitempty"`
+	Sources []string `json:"sources,omitempty"`
 }
 
 type BackupPluginType struct {
@@ -25,9 +27,9 @@ type BackupPluginType struct {
 }
 
 type BackupPolicy struct {
-	Code           string                      `json:"code"`
-	Configurations []BackupPolicyConfiguration `json:"backupConfigurations"`
-	Name           string                      `json:"name"`
+	Code           string                `json:"code"`
+	Configurations []BackupConfiguration `json:"backupConfigurations"`
+	Name           string                `json:"name"`
 	core.DTO
 }
 
