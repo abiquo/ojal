@@ -37,12 +37,32 @@ func (v *VirtualMachine) Reconfigure() (err error) {
 
 // Deploy deploys v
 func (v *VirtualMachine) Deploy() (err error) {
-	return NewTask(v.Rel("deploy"), "virtualmachinetask", v)
+	return NewTask(core.Post(
+		v.Rel("deploy").Href,
+		"acceptedrequest",
+		"virtualmachinetask",
+		v,
+	))
 }
 
 // Undeploy undeploys v
 func (v *VirtualMachine) Undeploy() (err error) {
-	return NewTask(v.Rel("undeploy"), "virtualmachinetask", v)
+	return NewTask(core.Post(
+		v.Rel("undeploy").Href,
+		"acceptedrequest",
+		"virtualmachinetask",
+		v,
+	))
+}
+
+// Off power offs the VM
+func (v *VirtualMachine) Off() (err error) {
+	return NewTask(core.Put(
+		v.Rel("state").Href,
+		"acceptedrequest",
+		"virtualmachinestate",
+		map[string]interface{}{"state": "OFF"},
+	))
 }
 
 // SetMetadata sets the VM metadata as requested

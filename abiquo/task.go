@@ -15,14 +15,9 @@ type Task struct {
 }
 
 // NewTask creates a new Abiquo API task from the caller
-func NewTask(link *core.Link, media string, data interface{}) (err error) {
+func NewTask(call *core.Call) (err error) {
 	reply := new(core.DTO)
-	if _, err = core.Rest(reply, core.Post(
-		link.Href,
-		"acceptedrequest",
-		media,
-		data,
-	)); err == nil {
+	if _, err = core.Rest(reply, call); err == nil {
 		endpoint := reply.Rel("status").SetType("taskextended")
 		if result := taskWait(endpoint); result != "FINISHED_SUCCESSFULLY" {
 			err = fmt.Errorf("task: %v %v", endpoint.Href, result)
