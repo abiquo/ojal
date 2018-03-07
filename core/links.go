@@ -13,6 +13,18 @@ func (l Links) Rel(rel string) (link *Link) {
 	return
 }
 
+type FilterLink func(l *Link) bool
+
+// Filter returns the links that meet the condition
+func (l Links) Filter(filter FilterLink) (links Links) {
+	for _, link := range l {
+		if filter(link) {
+			links = append(links, link)
+		}
+	}
+	return
+}
+
 // Link retuns the self/edit link to thecore.Resource
 func (l Links) Link() (link *Link) {
 	if link = l.Rel("edit"); link == nil {
