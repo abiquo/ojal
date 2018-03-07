@@ -1,6 +1,8 @@
 package core
 
-import "net/url"
+import (
+	"net/url"
+)
 
 // Link represents an Abiquo link
 type Link struct {
@@ -45,6 +47,11 @@ func (l *Link) Media() (media string) {
 		media = l.Type
 	}
 	return
+}
+
+// IsMedia returns whether the link is of media Type
+func (l *Link) IsMedia(media string) bool {
+	return l.Type == Media(media)
 }
 
 // SetType retuns a link clone with the specified type value
