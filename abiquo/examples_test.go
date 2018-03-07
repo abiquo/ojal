@@ -17,9 +17,9 @@ var (
 
 func init() {
 	environment = map[string]string{
-		"OPAL_ENDPOINT": os.Getenv("OPAL_ENDPOINT"),
-		"OPAL_USERNAME": os.Getenv("OPAL_USERNAME"),
-		"OPAL_PASSWORD": os.Getenv("OPAL_PASSWORD"),
+		"OJAL_ENDPOINT": os.Getenv("OJAL_ENDPOINT"),
+		"OJAL_USERNAME": os.Getenv("OJAL_USERNAME"),
+		"OJAL_PASSWORD": os.Getenv("OJAL_PASSWORD"),
 	}
 
 	for k, v := range environment {
@@ -28,9 +28,9 @@ func init() {
 		}
 	}
 
-	if err := core.Init(environment["OPAL_ENDPOINT"], core.Basic{
-		Username: environment["OPAL_USERNAME"],
-		Password: environment["OPAL_PASSWORD"],
+	if err := core.Init(environment["OJAL_ENDPOINT"], core.Basic{
+		Username: environment["OJAL_USERNAME"],
+		Password: environment["OJAL_PASSWORD"],
 	}); err != nil {
 		panic(err)
 	}

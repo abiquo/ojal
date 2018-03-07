@@ -48,13 +48,13 @@ var (
 
 func init() {
 	environment = map[string]string{
-		"OPAL_ENDPOINT":     os.Getenv("OPAL_ENDPOINT"),
-		"OPAL_USERNAME":     os.Getenv("OPAL_USERNAME"),
-		"OPAL_PASSWORD":     os.Getenv("OPAL_PASSWORD"),
-		"OPAL_TOKEN":        os.Getenv("OPAL_TOKEN"),
-		"OPAL_TOKEN_SECRET": os.Getenv("OPAL_TOKEN_SECRET"),
-		"OPAL_API_SECRET":   os.Getenv("OPAL_API_SECRET"),
-		"OPAL_API_KEY":      os.Getenv("OPAL_API_KEY"),
+		"OJAL_ENDPOINT":     os.Getenv("OJAL_ENDPOINT"),
+		"OJAL_USERNAME":     os.Getenv("OJAL_USERNAME"),
+		"OJAL_PASSWORD":     os.Getenv("OJAL_PASSWORD"),
+		"OJAL_TOKEN":        os.Getenv("OJAL_TOKEN"),
+		"OJAL_TOKEN_SECRET": os.Getenv("OJAL_TOKEN_SECRET"),
+		"OJAL_API_SECRET":   os.Getenv("OJAL_API_SECRET"),
+		"OJAL_API_KEY":      os.Getenv("OJAL_API_KEY"),
 	}
 
 	for k, v := range environment {
@@ -64,15 +64,15 @@ func init() {
 	}
 
 	basic = core.Basic{
-		Username: environment["OPAL_USERNAME"],
-		Password: environment["OPAL_PASSWORD"],
+		Username: environment["OJAL_USERNAME"],
+		Password: environment["OJAL_PASSWORD"],
 	}
 
 	oauth = core.Oauth{
-		APIKey:      environment["OPAL_API_KEY"],
-		APISecret:   environment["OPAL_API_SECRET"],
-		TokenSecret: environment["OPAL_TOKEN_SECRET"],
-		Token:       environment["OPAL_TOKEN"],
+		APIKey:      environment["OJAL_API_KEY"],
+		APISecret:   environment["OJAL_API_SECRET"],
+		TokenSecret: environment["OJAL_TOKEN_SECRET"],
+		Token:       environment["OJAL_TOKEN"],
 	}
 }
 
@@ -80,9 +80,9 @@ func newDTO() core.Resource { return new(dto) }
 
 func TestInit(t *testing.T) {
 	err0 := core.Init("https://fail:443/api", core.Basic{})
-	err1 := core.Init(environment["OPAL_ENDPOINT"], core.Basic{})
-	err2 := core.Init(environment["OPAL_ENDPOINT"], oauth)
-	err3 := core.Init(environment["OPAL_ENDPOINT"], basic)
+	err1 := core.Init(environment["OJAL_ENDPOINT"], core.Basic{})
+	err2 := core.Init(environment["OJAL_ENDPOINT"], oauth)
+	err3 := core.Init(environment["OJAL_ENDPOINT"], basic)
 
 	battery{
 		{"err0", err0 == nil, false},
