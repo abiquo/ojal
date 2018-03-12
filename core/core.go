@@ -32,7 +32,9 @@ var (
 
 // RegisterMedia sets the Resource factory for the media collection
 func RegisterMedia(media, collection string, factory func() Resource) {
-	collections[Media(collection)] = Media(media)
+	if len(collection) > 0 {
+		collections[Media(collection)] = Media(media)
+	}
 	resources[Media(media)] = factory
 }
 

@@ -6,35 +6,35 @@ import (
 
 func init() {
 	collections := map[string]string{
-		"backuppolicies":          "backuppolicy",
-		"categories":              "category",
-		"datacenters":             "datacenter",
-		"datacenterrepositories":  "datacenterrepository",
-		"datastoreloadrules":      "datastoreloadrule",
-		"datastores":              "datastore",
-		"datastoretiers":          "datastoretier",
-		"devices":                 "device",
-		"devicetypes":             "devicetype",
-		"enterprises":             "enterprise",
-		"fitpolicyrules":          "fitpolicyrule",
-		"hardwareprofiles":        "hardwareprofile",
-		"ips":                     "ip",
-		"licenses":                "license",
-		"machineloadrules":        "machineloadrule",
-		"machines":                "machine",
-		"networkservicetypes":     "networkservicetype",
-		"privileges":              "privilege",
-		"publiccloudregions":      "publiccloudregion",
-		"racks":                   "rack",
-		"remoteservices":          "remoteservice",
-		"roles":                   "role",
-		"scopes":                  "scope",
-		"users":                   "user",
-		"vlans":                   "vlan",
-		"virtualappliances":       "virtualappliance",
-		"virtualdatacenters":      "virtualdatacenter",
-		"virtualmachines":         "virtualmachine",
-		"virtualmachinetemplates": "virtualmachinetemplate",
+		"backuppolicy":           "backuppolicies",
+		"category":               "categories",
+		"datacenter":             "datacenters",
+		"datacenterrepository":   "datacenterrepositories",
+		"datastoreloadrule":      "datastoreloadrules",
+		"datastore":              "datastores",
+		"datastoretier":          "datastoretiers",
+		"device":                 "devices",
+		"devicetype":             "devicetypes",
+		"enterprise":             "enterprises",
+		"fitpolicyrule":          "fitpolicyrules",
+		"hardwareprofile":        "hardwareprofiles",
+		"ip":                     "ips",
+		"license":                "licenses",
+		"machineloadrule":        "machineloadrules",
+		"machine":                "machines",
+		"networkservicetype":     "networkservicetypes",
+		"privilege":              "privileges",
+		"publiccloudregion":      "publiccloudregions",
+		"rack":                   "racks",
+		"remoteservice":          "remoteservices",
+		"role":                   "roles",
+		"scope":                  "scopes",
+		"user":                   "users",
+		"vlan":                   "vlans",
+		"virtualappliance":       "virtualappliances",
+		"virtualdatacenter":      "virtualdatacenters",
+		"virtualmachine":         "virtualmachines",
+		"virtualmachinetemplate": "virtualmachinetemplates",
 	}
 
 	resources := map[string]func() core.Resource{
@@ -48,6 +48,7 @@ func init() {
 		"device":                 func() core.Resource { return new(Device) },
 		"devicetype":             func() core.Resource { return new(DeviceType) },
 		"enterprise":             func() core.Resource { return new(Enterprise) },
+		"enterpriseproperties":   func() core.Resource { return new(EnterpriseProperties) },
 		"fitpolicyrule":          func() core.Resource { return new(FitPolicy) },
 		"hardwareprofile":        func() core.Resource { return new(HardwareProfile) },
 		"ip":                     func() core.Resource { return new(IP) },
@@ -69,8 +70,8 @@ func init() {
 		"virtualmachinetemplate": func() core.Resource { return new(VirtualMachineTemplate) },
 	}
 
-	for collection, media := range collections {
-		core.RegisterMedia(media, collection, resources[media])
+	for media, factory := range resources {
+		core.RegisterMedia(media, collections[media], factory)
 	}
 }
 
