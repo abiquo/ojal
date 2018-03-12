@@ -58,3 +58,8 @@ func ExampleEnterprise() {
 		fmt.Println(e.URL())
 	}
 }
+
+type EnterpriseProperties struct {
+	Properties map[string]string `json:"properties"`
+	core.DTO
+}
