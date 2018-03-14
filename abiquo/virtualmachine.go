@@ -31,6 +31,11 @@ type VirtualMachineMetadataFields struct {
 	StartupScript string `json:"startup-script,omitempty"`
 }
 
+type VirtualMachineState struct {
+	State    string `json:"state"`
+	Graceful bool   `json:"gracefulShutdown,omitempty"`
+}
+
 // Reconfigure reconfigures v
 func (v *VirtualMachine) Reconfigure() (err error) {
 	_, err = core.Rest(v, core.Put(v.URL(), "acceptedrequest", v.Media(), v))
@@ -57,13 +62,23 @@ func (v *VirtualMachine) Undeploy() (err error) {
 	))
 }
 
-// Off power offs the VM
+// Off powers off the VM
 func (v *VirtualMachine) Off() (err error) {
 	return NewTask(core.Put(
 		v.Rel("state").Href,
 		"acceptedrequest",
 		"virtualmachinestate",
 		map[string]interface{}{"state": "OFF"},
+	))
+}
+
+// On powers on the VM
+func (v *VirtualMachine) On() (err error) {
+	return NewTask(core.Put(
+		v.Rel("state").Href,
+		"acceptedrequest",
+		"virtualmachinestate",
+		map[string]interface{}{"state": "ON"},
 	))
 }
 
