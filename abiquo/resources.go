@@ -36,6 +36,16 @@ type HardDisk struct {
 	core.DTO
 }
 
+type Tier struct {
+	ID                      int    `json:"id,omitempty"`
+	Name                    string `json:"name"`
+	Description             string `json:"description"`
+	Enabled                 bool   `json:"enabled"`
+	DefaultAllowed          bool   `json:"defaultAllowed"`
+	storageAllocationPolicy string `json:"storageAllocationPolicy"`
+	core.DTO
+}
+
 type Volume struct {
 	Id                 int    `json:"idomitempty"`
 	AllowResize        bool   `json:"allowResize"`
