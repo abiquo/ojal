@@ -21,6 +21,7 @@ type VirtualMachineTemplate struct {
 	Label                            string      `json:"label,omitempty"`
 	OsType                           string      `json:"osType,omitempty"`
 	RAMRequired                      int         `json:"ramRequired,omitempty"`
+	State                            string      `json:"state,omitempty"`
 	Variables                        interface{} `json:"variables,omitempty"`
 	core.DTO
 }
