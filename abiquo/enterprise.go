@@ -21,7 +21,7 @@ type Enterprise struct {
 
 	CPUSoft  int `json:"cpuSoft"` // Enterprise global soft limits
 	HDSoft   int `json:"HDSoft"`
-	IPSoft   int `json:"ipSoft"`
+	IPSoft   int `json:"publicIpsSoft"`
 	RAMSoft  int `json:"ramSoft"`
 	RepoSoft int `json:"repositorySoftInMb"`
 	VolSoft  int `json:"volSoft"`
@@ -29,7 +29,7 @@ type Enterprise struct {
 
 	CPUHard  int `json:"cpuHard"` // Enterprise global hard limits
 	HDHard   int `json:"HDHard"`
-	IPHard   int `json:"ipHard"`
+	IPHard   int `json:"publicIpsHard"`
 	RAMHard  int `json:"ramHard"`
 	RepoHard int `json:"repositoryHardInMb"`
 	VolHard  int `json:"volHard"`
