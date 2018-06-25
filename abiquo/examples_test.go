@@ -112,7 +112,7 @@ func ExampleNetwork() {
 			Address: "192.168.0.0",
 			Gateway: "192.168.0.1",
 			Name:    name,
-			TypeNet: "INTERNAL",
+			Type:    "INTERNAL",
 		},
 		DTO: core.NewDTO(
 			datacenter.SetRel("location"),
@@ -147,7 +147,7 @@ func ExampleDatacenter() {
 		Gateway: "172.16.45.1",
 		Name:    name,
 		Tag:     3743,
-		TypeNet: "EXTERNAL",
+		Type:    "EXTERNAL",
 		DTO: core.NewDTO(
 			core.NewLinkType("admin/enterprises/1", "enterprise").SetRel("enterprise"),
 			core.NewLinkType("admin/datacenters/1/networkservicetypes/1", "networkservicetype").SetRel("networkservicetype"),

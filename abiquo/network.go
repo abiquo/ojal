@@ -17,6 +17,6 @@ type Network struct {
 	Name    string `json:"name"`
 	Suffix  string `json:"sufixDNS,omitempty"`
 	Tag     int    `json:"tag,omitempty"`
-	TypeNet string `json:"type"`
+	Type    string `json:"type"`
 	core.DTO
 }
