@@ -1,8 +1,6 @@
 package abiquo
 
 import (
-	"fmt"
-
 	"github.com/abiquo/ojal/core"
 )
 
@@ -21,16 +19,4 @@ type Network struct {
 	Tag     int    `json:"tag,omitempty"`
 	TypeNet string `json:"type"`
 	core.DTO
-}
-
-// CreateIP creates the provided IP in the Network
-func (n *Network) CreateIP(i *IP) error {
-	var media string
-	switch n.TypeNet {
-	case "INTERNAL":
-		media = "privateip"
-	default:
-		return fmt.Errorf("CreateIP: %v ip type not implemented", n.TypeNet)
-	}
-	return core.Create(n.Rel("ips").SetType(media), i)
 }

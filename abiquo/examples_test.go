@@ -120,7 +120,9 @@ func ExampleNetwork() {
 		),
 	}
 	err2 := vdc.Create()
-	err3 := vdc.Network.CreateIP(&abiquo.IP{IP: "192.168.0.253"})
+	err3 := core.Create(vdc.Network.Rel("ips").SetType("privateip"), &abiquo.IP{
+		IP: "192.168.0.253"},
+	)
 
 	fmt.Println(err0)
 	fmt.Println(err1)
