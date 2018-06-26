@@ -12,6 +12,16 @@ type Resource interface {
 // Resources represents an Abiquo API collection elements
 type Resources []Resource
 
+// Find a resource in a collection
+func (r Resources) Find(t Test) Resource {
+	for _, resource := range r {
+		if t(resource) {
+			return resource
+		}
+	}
+	return nil
+}
+
 // Filter returns the elements which fullfill the Test
 func (r Resources) Filter(t Test) (resources Resources) {
 	for _, resource := range r {
