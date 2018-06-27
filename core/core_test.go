@@ -48,13 +48,13 @@ var (
 
 func init() {
 	environment = map[string]string{
-		"OJAL_ENDPOINT":     os.Getenv("OJAL_ENDPOINT"),
-		"OJAL_USERNAME":     os.Getenv("OJAL_USERNAME"),
-		"OJAL_PASSWORD":     os.Getenv("OJAL_PASSWORD"),
-		"OJAL_TOKEN":        os.Getenv("OJAL_TOKEN"),
-		"OJAL_TOKEN_SECRET": os.Getenv("OJAL_TOKEN_SECRET"),
-		"OJAL_API_SECRET":   os.Getenv("OJAL_API_SECRET"),
-		"OJAL_API_KEY":      os.Getenv("OJAL_API_KEY"),
+		"ABQ_ENDPOINT":     os.Getenv("ABQ_ENDPOINT"),
+		"ABQ_USERNAME":     os.Getenv("ABQ_USERNAME"),
+		"ABQ_PASSWORD":     os.Getenv("ABQ_PASSWORD"),
+		"ABQ_TOKEN":        os.Getenv("ABQ_TOKEN"),
+		"ABQ_TOKEN_SECRET": os.Getenv("ABQ_TOKEN_SECRET"),
+		"ABQ_API_SECRET":   os.Getenv("ABQ_API_SECRET"),
+		"ABQ_API_KEY":      os.Getenv("ABQ_API_KEY"),
 	}
 
 	for k, v := range environment {
@@ -64,15 +64,15 @@ func init() {
 	}
 
 	basic = core.Basic{
-		Username: environment["OJAL_USERNAME"],
-		Password: environment["OJAL_PASSWORD"],
+		Username: environment["ABQ_USERNAME"],
+		Password: environment["ABQ_PASSWORD"],
 	}
 
 	oauth = core.Oauth{
-		APIKey:      environment["OJAL_API_KEY"],
-		APISecret:   environment["OJAL_API_SECRET"],
-		TokenSecret: environment["OJAL_TOKEN_SECRET"],
-		Token:       environment["OJAL_TOKEN"],
+		APIKey:      environment["ABQ_API_KEY"],
+		APISecret:   environment["ABQ_API_SECRET"],
+		TokenSecret: environment["ABQ_TOKEN_SECRET"],
+		Token:       environment["ABQ_TOKEN"],
 	}
 }
 
@@ -80,9 +80,9 @@ func newDTO() core.Resource { return new(dto) }
 
 func TestInit(t *testing.T) {
 	err0 := core.Init("https://fail:443/api", core.Basic{})
-	err1 := core.Init(environment["OJAL_ENDPOINT"], core.Basic{})
-	err2 := core.Init(environment["OJAL_ENDPOINT"], oauth)
-	err3 := core.Init(environment["OJAL_ENDPOINT"], basic)
+	err1 := core.Init(environment["ABQ_ENDPOINT"], core.Basic{})
+	err2 := core.Init(environment["ABQ_ENDPOINT"], oauth)
+	err3 := core.Init(environment["ABQ_ENDPOINT"], basic)
 
 	battery{
 		{"err0", err0 == nil, false},
