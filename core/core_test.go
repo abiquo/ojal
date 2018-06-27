@@ -55,6 +55,7 @@ func init() {
 		"ABQ_TOKEN_SECRET": os.Getenv("ABQ_TOKEN_SECRET"),
 		"ABQ_API_SECRET":   os.Getenv("ABQ_API_SECRET"),
 		"ABQ_API_KEY":      os.Getenv("ABQ_API_KEY"),
+		"ABQ_OVA":          os.Getenv("ABQ_OVA"),
 	}
 
 	for k, v := range environment {
@@ -254,9 +255,8 @@ func ExampleType() {
 }
 
 func ExampleUpload() {
-	ova := "/home/antxon/Downloads/test.ova"
 	templates := "https://test:443/am/erepos/1/templates"
-	reply, err := core.Upload(templates, ova)
+	reply, err := core.Upload(templates, environment["ABQ_OVA"])
 
 	fmt.Println(err)
 	fmt.Println(reply.Ok())
