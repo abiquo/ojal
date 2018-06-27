@@ -8,13 +8,16 @@ import (
 var logger *log.Logger
 
 func init() {
-	if _, ok := os.LookupEnv("ABQ_DEBUG"); ok {
-		file, err := os.OpenFile("ojal", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
-		if err != nil {
-			panic(err)
-		}
-		logger = log.New(file, "", 0)
+	path, _ := os.LookupEnv("ABQ_TRACE")
+	if path == "" {
+		return
 	}
+
+	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
+	if err != nil {
+		panic(err)
+	}
+	logger = log.New(file, "", 0)
 }
 
 func debug(r *Reply, err error) {
