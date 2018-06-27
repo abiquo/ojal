@@ -28,7 +28,7 @@ func debug(r *Reply, err error) {
 	}
 
 	req := r.Request
-	logger.Printf(`curl -v -X%v %v \`, req.Method, req.URL)
+	logger.Printf(`curl -nv -X%v %v \`, req.Method, req.URL)
 	for h := range req.Header {
 		logger.Printf(`-H "%v: %v" \`, h, req.Header.Get(h))
 	}
