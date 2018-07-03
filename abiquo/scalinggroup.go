@@ -32,3 +32,14 @@ func (s *ScalingGroup) StartMaintenance() (err error) {
 	))
 	return
 }
+
+// EndMaintenance disables the *ScalingGroup maintenance mode
+func (s *ScalingGroup) EndMaintenance() (err error) {
+	_, err = core.Rest(nil, core.Post(
+		s.Rel("endmaintenance").Href,
+		"application/json, text/plain, */*",
+		"application/json",
+		nil,
+	))
+	return
+}
