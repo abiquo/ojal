@@ -5,21 +5,28 @@ type Links []*Link
 
 // Rel returns the rel object link
 func (l Links) Rel(rel string) (link *Link) {
-	for _, l := range l {
-		if l.Rel == rel {
-			return l
+	return l.Find(func(l *Link) bool {
+		return l.Rel == rel
+	})
+}
+
+type TestLink func(l *Link) bool
+
+// Filter returns the links that meet the condition
+func (l Links) Filter(t TestLink) (links Links) {
+	for _, link := range l {
+		if t(link) {
+			links = append(links, link)
 		}
 	}
 	return
 }
 
-type FilterLink func(l *Link) bool
-
 // Filter returns the links that meet the condition
-func (l Links) Filter(filter FilterLink) (links Links) {
+func (l Links) Find(t TestLink) (link *Link) {
 	for _, link := range l {
-		if filter(link) {
-			links = append(links, link)
+		if t(link) {
+			return link
 		}
 	}
 	return
