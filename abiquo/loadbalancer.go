@@ -33,3 +33,12 @@ type LoadBalancer struct {
 func (l *LoadBalancer) SetRules(rules []RoutingRule) error {
 	return core.Update(l.Rel("rules"), &RoutingRules{rules})
 }
+
+func (l *LoadBalancer) VMs() (vms core.Links) {
+	link := l.Rel("virtualmachines")
+	if link != nil {
+		resource := link.Walk()
+		vms = resource.(*core.DTO).Links
+	}
+	return
+}

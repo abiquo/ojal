@@ -74,6 +74,7 @@ func init() {
 		"ip":                     func() core.Resource { return new(IP) },
 		"license":                func() core.Resource { return new(License) },
 		"limit":                  func() core.Resource { return new(Limit) },
+		"links":                  func() core.Resource { return new(core.DTO) },
 		"loadbalancer":           func() core.Resource { return new(LoadBalancer) },
 		"machine":                func() core.Resource { return new(Machine) },
 		"machineloadrule":        func() core.Resource { return new(MachineLoadRule) },
