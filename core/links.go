@@ -32,6 +32,13 @@ func (l Links) Find(t TestLink) (link *Link) {
 	return
 }
 
+// Map executes function f(*Link) on all the Links elements
+func (l Links) Map(f func(*Link)) {
+	for _, link := range l {
+		f(link)
+	}
+}
+
 // Link retuns the self/edit link to thecore.Resource
 func (l Links) Link() (link *Link) {
 	if link = l.Rel("edit"); link == nil {
