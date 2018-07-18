@@ -36,7 +36,8 @@ func (v *VirtualDatacenter) Create() error {
 	return core.Create(endpoint, v)
 }
 
-// CreateNetwork creates a new private network in the VDC
-func (v *VirtualDatacenter) CreateNetwork(network *Network) error {
-	return core.Create(v.Rel("privatenetworks").SetType("vlan"), network)
+// VirtualAppliance represents a VAPP dto
+type VirtualAppliance struct {
+	Name string `json:"name"`
+	core.DTO
 }

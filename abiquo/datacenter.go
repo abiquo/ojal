@@ -29,7 +29,57 @@ func Datacenters(query url.Values) *core.Collection {
 	return core.NewLinker("admin/datacenters", "datacenters").Collection(query)
 }
 
-// CreateExternal creates a new external network in the datacenter
-func (d *Datacenter) CreateExternal(external *Network) (err error) {
-	return core.Create(d.Rel("network").SetType("vlan"), external)
+// Rack represents an Abiquo Datacenter rack
+type Rack struct {
+	Description string `json:"shortDescription"`
+	HAEnabled   bool   `json:"haEnabled,omitempty"`
+	ID          int    `json:"id,omitempty"`
+	Name        string `json:"name"`
+	NRSQ        int    `json:"nrsq,omitempty"`
+	VlanIDMax   int    `json:"vlanIdMax,omitempty"`
+	VlanIDMin   int    `json:"vlanIdMin,omitempty"`
+	Reserved    int    `json:"vlanPerVdcReserved,omitempty"`
+	core.DTO
+}
+
+type NetworkServiceType struct {
+	Default bool   `json:"defaultNST"`
+	ID      int    `json:"id"`
+	Name    string `json:"name"`
+	core.DTO
+}
+
+type Machine struct {
+	AgentUser  string `json:"agentUser"`
+	CPU        int    `json:"cpu"`
+	CPUUsed    int    `json:"cpuUsed"`
+	Datastores struct {
+		Collection []*Datastore `json:"collection"`
+		core.DTO
+	} `json:"datastores"`
+	Description string `json:"description"`
+	Hostname    string `json:"hostname"`
+	Initiator   string `json:"initiatorIQN"`
+	IP          string `json:"ip"`
+	IPService   string `json:"ipService"`
+	ManagerIP   string `json:"managerIp,omitempty"`
+	ManagerPass string `json:"managerPassword,omitempty"`
+	ManagerUser string `json:"managerUser,omitempty"`
+	Name        string `json:"name"`
+	Interfaces  struct {
+		Collection []*struct {
+			MAC  string `json:"mac"`
+			Name string `json:"name"`
+			core.DTO
+		} `json:"collection"`
+		core.DTO
+	} `json:"networkInterfaces"`
+	Password string `json:"password,omitempty"`
+	Port     int    `json:"port,omitempty"`
+	RAM      int    `json:"ram"`
+	RAMUsed  int    `json:"ramUsed"`
+	State    string `json:"state"`
+	Type     string `json:"type"`
+	User     string `json:"user"`
+	core.DTO
 }

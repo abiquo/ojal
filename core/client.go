@@ -98,13 +98,17 @@ func Version() string { return version }
 
 // Do performs an Abiquo API call
 func do(c *Call) (r *Reply, err error) {
-	var req *http.Request
-	if req, err = c.request(); err == nil {
-		var res *http.Response
-		if res, err = client.Do(req); err == nil {
-			r, err = newReply(res, c.payload)
-		}
+	req, err := c.request()
+	if err != nil {
+		return
 	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return
+	}
+
+	r, err = newReply(res, c.payload)
 	return
 }
 

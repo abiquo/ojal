@@ -47,11 +47,6 @@ func (e *Enterprise) Create() error {
 	return core.Create(core.NewLinker("admin/enterprises", "enterprise"), e)
 }
 
-// CreateLimit
-func (e *Enterprise) CreateLimit(l *Limit) error {
-	return core.Create(e.Rel("limits").SetType("limit"), l)
-}
-
 // ExampleEnterprise show all enterprises names
 func ExampleEnterprise() {
 	for _, e := range Enterprises(nil).List() {
@@ -61,5 +56,41 @@ func ExampleEnterprise() {
 
 type EnterpriseProperties struct {
 	Properties map[string]string `json:"properties"`
+	core.DTO
+}
+
+// Limit represents an abiquo enterprise limit
+type Limit struct {
+	CPUHard   int  `json:"cpuHard"`
+	CPUSoft   int  `json:"cpuSoft"`
+	HDHard    int  `json:"HDHard"`
+	HDSoft    int  `json:"HDSoft"`
+	EnableHPs bool `json:"enabledHardwareProfiles"`
+	IPHard    int  `json:"ipHard"`
+	IPSoft    int  `json:"ipSoft"`
+	RAMHard   int  `json:"ramHard"`
+	RAMSoft   int  `json:"ramSoft"`
+	RepoHard  int  `json:"repositoryHardInMb"`
+	RepoSoft  int  `json:"repositorySoftInMb"`
+	VLANHard  int  `json:"vlansHard"`
+	VLANSoft  int  `json:"vlansSoft"`
+	VolHard   int  `json:"volHard"`
+	VolSoft   int  `json:"volSoft"`
+	core.DTO
+}
+
+// User represents an Abiquo enterprise user
+type User struct {
+	Active      bool   `json:"active,omitempty"`
+	AuthType    string `json:"authType,omitempty"`
+	Description string `json:"description,omitempty"`
+	Email       string `json:"email"`
+	FirstLogin  bool   `json:"firstLogin,omitempty"`
+	Locale      string `json:"locale"`
+	Locked      bool   `json:"locked,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Nick        string `json:"nick,omitempty"`
+	Password    string `json:"password,omitempty"`
+	Surname     string `json:"surname,omitempty"`
 	core.DTO
 }

@@ -23,7 +23,3 @@ type FirewallRule struct {
 type FirewallRules struct {
 	Collection []FirewallRule `json:"collection"`
 }
-
-func (f *Firewall) SetRules(rules *FirewallRules) error {
-	return core.Update(f.Rel("rules"), rules)
-}

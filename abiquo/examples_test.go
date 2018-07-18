@@ -13,6 +13,9 @@ import (
 var (
 	name        = fmt.Sprint("ztest", -time.Now().Unix())
 	environment map[string]string
+	location    core.Resource
+	datacenter  core.Resource
+	enterprise  core.Resource
 )
 
 func init() {
@@ -33,6 +36,24 @@ func init() {
 		Password: environment["ABQ_PASSWORD"],
 	}); err != nil {
 		panic(err)
+	}
+
+	if location = abiquo.Datacenters(nil).Find(func(r core.Resource) bool {
+		return r.Link().Title == "datacenter 1"
+	}); location == nil {
+		panic("location not found")
+	}
+
+	if datacenter = abiquo.PrivateLocations(nil).Find(func(r core.Resource) bool {
+		return r.Link().Title == "datacenter 1"
+	}); datacenter == nil {
+		panic("datacenter not found")
+	}
+
+	if enterprise = abiquo.Enterprises(nil).Find(func(r core.Resource) bool {
+		return r.Link().Title == "Abiquo"
+	}); enterprise == nil {
+		panic("enterprise not found")
 	}
 }
 
@@ -79,12 +100,12 @@ func ExampleCategory() {
 
 func ExampleLogin() {
 	user := abiquo.Login()
-	enterprise := user.Enterprise()
+	enterprise := user.Rel("enterprise").Walk()
 
 	fmt.Println(user == nil)
 	fmt.Println(enterprise == nil)
 	fmt.Println(user.Name)
-	fmt.Println(enterprise.Name)
+	fmt.Println(enterprise.Link().Title)
 
 	// Output:
 	// false
@@ -94,15 +115,16 @@ func ExampleLogin() {
 }
 
 func ExampleNetwork() {
-	location := core.NewLinkType("admin/datacenters/1", "location")
-	datacenter := core.NewLinkType("cloud/locations/1", "location")
-
 	enterprise := &abiquo.Enterprise{Name: name}
 	err0 := enterprise.Create()
-	err1 := enterprise.CreateLimit(&abiquo.Limit{DTO: core.NewDTO(
-		enterprise.Link().SetRel("enterprise"),
-		location.SetRel("location"),
-	)})
+
+	endpoint := enterprise.Rel("limits").SetType("limit")
+	err1 := core.Create(endpoint, &abiquo.Limit{
+		DTO: core.NewDTO(
+			enterprise.Link().SetRel("enterprise"),
+			location.Link().SetRel("location"),
+		)},
+	)
 
 	vdc := &abiquo.VirtualDatacenter{
 		Name:   name,
@@ -115,21 +137,30 @@ func ExampleNetwork() {
 			Type:    "INTERNAL",
 		},
 		DTO: core.NewDTO(
-			datacenter.SetRel("location"),
+			datacenter.Rel("location"),
 			enterprise.Link().SetRel("enterprise"),
 		),
 	}
 	err2 := vdc.Create()
-	err3 := core.Create(vdc.Network.Rel("ips").SetType("privateip"), &abiquo.IP{
-		IP: "192.168.0.253"},
-	)
+
+	endpoint = vdc.Network.Rel("ips").SetType("privateip")
+	err3 := core.Create(endpoint, &abiquo.IP{
+		IP: "192.168.0.253",
+	})
+
+	err4 := core.Remove(vdc)
+	err5 := core.Remove(enterprise)
 
 	fmt.Println(err0)
 	fmt.Println(err1)
 	fmt.Println(err2)
 	fmt.Println(err3)
+	fmt.Println(err4)
+	fmt.Println(err5)
 
 	// Output:
+	// <nil>
+	// <nil>
 	// <nil>
 	// <nil>
 	// <nil>
@@ -138,10 +169,10 @@ func ExampleNetwork() {
 
 // ExampleDatacenter shows the Datacenter functionality
 func ExampleDatacenter() {
-	dc := new(abiquo.Datacenter)
-	endpoint := core.NewLinkType("admin/datacenters/1", "datacenter")
-	read := core.Read(endpoint, dc)
-	network := &abiquo.Network{
+	nst := datacenter.Rel("networkservicetypes").Collection(nil).Find(func(r core.Resource) bool {
+		return r.Link().Title == "Service Network"
+	})
+	external := &abiquo.Network{
 		Mask:    24,
 		Address: "172.16.45.0",
 		Gateway: "172.16.45.1",
@@ -149,16 +180,19 @@ func ExampleDatacenter() {
 		Tag:     3743,
 		Type:    "EXTERNAL",
 		DTO: core.NewDTO(
-			core.NewLinkType("admin/enterprises/1", "enterprise").SetRel("enterprise"),
-			core.NewLinkType("admin/datacenters/1/networkservicetypes/1", "networkservicetype").SetRel("networkservicetype"),
+			enterprise.Link().SetRel("enterprise"),
+			nst.Link().SetRel("networkservicetype"),
 		),
 	}
-	fmt.Println(read)
-	fmt.Println(dc.CreateExternal(network))
-	fmt.Println(core.Remove(network))
+
+	endpoint := datacenter.Rel("network").SetType("vlan")
+	err0 := core.Create(endpoint, external)
+	err1 := core.Remove(external)
+
+	fmt.Println(err0)
+	fmt.Println(err1)
 
 	// Output:
-	// <nil>
 	// <nil>
 	// <nil>
 }
@@ -171,7 +205,8 @@ func ExampleVirtualMachine_Deploy() {
 		DTO: core.NewDTO(template.SetRel("virtualmachinetemplate")),
 	}
 
-	vapp.CreateVM(vm)
+	endpoint = vapp.Rel("virtualmachines").SetType("virtualmachine")
+	core.Create(endpoint, vm)
 	vm.Deploy()
 	vm.Undeploy()
 	vm.Delete()

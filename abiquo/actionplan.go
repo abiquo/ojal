@@ -16,8 +16,3 @@ type ActionPlanEntry struct {
 	Sequence      int    `json:"sequence"`
 	Type          string `json:"type"`
 }
-
-// SetTriggers posts a list of lists to *a alerttriggers link
-func (a *ActionPlan) SetTriggers(d *core.DTO) error {
-	return core.Create(a.Rel("alerttriggers"), d)
-}
