@@ -2,27 +2,6 @@ package abiquo
 
 import "github.com/abiquo/ojal/core"
 
-type Alarm struct {
-	Active           bool   `json:"active"`
-	TimeRangeMinutes int    `json:"timeRangeMinutes"`
-	DataPointsLimit  int    `json:"datapointslimit"`
-	Formula          string `json:"formula"`
-	Name             string `json:"name"`
-	Statistic        string `json:"statistic"`
-	Threshold        int    `json:"threshold"`
-	core.DTO
-}
-
-type Alert struct {
-	Active      bool       `json:"active"`
-	Description string     `json:"description"`
-	Muted       bool       `json:"muted"`
-	Name        string     `json:"name"`
-	Subscribers []string   `json:"subscribers,omitempty"`
-	Alarms      core.Links `json:"alarms"`
-	core.DTO
-}
-
 type HardDisk struct {
 	Id                 int    `json:"id,omitempty"`
 	Label              string `json:"label,omitempty"`

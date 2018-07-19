@@ -2,6 +2,17 @@ package abiquo
 
 import "github.com/abiquo/ojal/core"
 
+// Alert represents an Abiquo alert DTO
+type Alert struct {
+	Active      bool       `json:"active"`
+	Description string     `json:"description"`
+	Muted       bool       `json:"muted"`
+	Name        string     `json:"name"`
+	Subscribers []string   `json:"subscribers,omitempty"`
+	Alarms      core.Links `json:"alarms"`
+	core.DTO
+}
+
 // ScalingGroup represents an Abiquo API Scaling group DTO
 type ScalingGroup struct {
 	Name        string             `json:"name"`
@@ -42,4 +53,10 @@ func (s *ScalingGroup) EndMaintenance() (err error) {
 		nil,
 	))
 	return
+}
+
+// VirtualAppliance represents an Abiquo virtual appliance DTO
+type VirtualAppliance struct {
+	Name string `json:"name"`
+	core.DTO
 }

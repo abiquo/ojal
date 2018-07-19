@@ -1,108 +1,43 @@
 package abiquo
 
 import (
+	"net/url"
+
 	"github.com/abiquo/ojal/core"
 )
 
-func init() {
-	collections := map[string]string{
-		"alarm":                  "alarms",
-		"alert":                  "alerts",
-		"backuppolicy":           "backuppolicies",
-		"category":               "categories",
-		"costcode":               "costcodes",
-		"currency":               "currencies",
-		"datacenter":             "datacenters",
-		"datacenterrepository":   "datacenterrepositories",
-		"datastoreloadrule":      "datastoreloadrules",
-		"datastore":              "datastores",
-		"datastoretier":          "datastoretiers",
-		"device":                 "devices",
-		"devicetype":             "devicetypes",
-		"enterprise":             "enterprises",
-		"externalip":             "externalips",
-		"firewallpolicy":         "firewallpolicies",
-		"fitpolicyrule":          "fitpolicyrules",
-		"hardwareprofile":        "hardwareprofiles",
-		"ip":                     "ips",
-		"license":                "licenses",
-		"limit":                  "limits",
-		"loadbalancer":           "loadbalancers",
-		"machineloadrule":        "machineloadrules",
-		"machine":                "machines",
-		"networkservicetype":     "networkservicetypes",
-		"pricingtemplate":        "pricingtemplates",
-		"privilege":              "privileges",
-		"publiccloudregion":      "publiccloudregions",
-		"publicip":               "publicips",
-		"rack":                   "racks",
-		"remoteservice":          "remoteservices",
-		"role":                   "roles",
-		"scalinggroup":           "scalinggroups",
-		"scope":                  "scopes",
-		"storagedevice":          "storagedevices",
-		"tier":                   "tiers",
-		"user":                   "users",
-		"vlan":                   "vlans",
-		"virtualappliance":       "virtualappliances",
-		"virtualdatacenter":      "virtualdatacenters",
-		"virtualmachine":         "virtualmachines",
-		"virtualmachinetemplate": "virtualmachinetemplates",
-		"volume":                 "volumes",
-	}
+// Categories returns the platform categories collection
+func Categories(query url.Values) *core.Collection {
+	return core.NewLinker("config/categories", "categories").Collection(query)
+}
 
-	resources := map[string]func() core.Resource{
-		"alarm":                  func() core.Resource { return new(Alarm) },
-		"alert":                  func() core.Resource { return new(Alert) },
-		"backuppolicy":           func() core.Resource { return new(BackupPolicy) },
-		"category":               func() core.Resource { return new(Category) },
-		"costcode":               func() core.Resource { return new(CostCode) },
-		"currency":               func() core.Resource { return new(Currency) },
-		"datacenter":             func() core.Resource { return new(Datacenter) },
-		"datacenterrepository":   func() core.Resource { return new(DatacenterRepository) },
-		"datastore":              func() core.Resource { return new(Datastore) },
-		"datastoreloadrule":      func() core.Resource { return new(DatastoreLoadRule) },
-		"datastoretier":          func() core.Resource { return new(DatastoreTier) },
-		"device":                 func() core.Resource { return new(Device) },
-		"devicetype":             func() core.Resource { return new(DeviceType) },
-		"enterprise":             func() core.Resource { return new(Enterprise) },
-		"enterpriseproperties":   func() core.Resource { return new(EnterpriseProperties) },
-		"externalip":             func() core.Resource { return new(IP) },
-		"firewallpolicy":         func() core.Resource { return new(Firewall) },
-		"fitpolicyrule":          func() core.Resource { return new(FitPolicy) },
-		"hardwareprofile":        func() core.Resource { return new(HardwareProfile) },
-		"ip":                     func() core.Resource { return new(IP) },
-		"license":                func() core.Resource { return new(License) },
-		"limit":                  func() core.Resource { return new(Limit) },
-		"links":                  func() core.Resource { return new(core.DTO) },
-		"loadbalancer":           func() core.Resource { return new(LoadBalancer) },
-		"machine":                func() core.Resource { return new(Machine) },
-		"machineloadrule":        func() core.Resource { return new(MachineLoadRule) },
-		"networkservicetype":     func() core.Resource { return new(NetworkServiceType) },
-		"pricingtemplate":        func() core.Resource { return new(PricingTemplate) },
-		"privateip":              func() core.Resource { return new(IP) },
-		"privilege":              func() core.Resource { return new(Privilege) },
-		"publiccloudregion":      func() core.Resource { return new(Location) },
-		"publicip":               func() core.Resource { return new(IP) },
-		"rack":                   func() core.Resource { return new(Rack) },
-		"remoteservice":          func() core.Resource { return new(RemoteService) },
-		"role":                   func() core.Resource { return new(Role) },
-		"scalinggroup":           func() core.Resource { return new(ScalingGroup) },
-		"scope":                  func() core.Resource { return new(Scope) },
-		"storagedevice":          func() core.Resource { return new(StorageDevice) },
-		"tier":                   func() core.Resource { return new(Tier) },
-		"user":                   func() core.Resource { return new(User) },
-		"vlan":                   func() core.Resource { return new(Network) },
-		"virtualappliance":       func() core.Resource { return new(VirtualAppliance) },
-		"virtualdatacenter":      func() core.Resource { return new(VirtualDatacenter) },
-		"virtualmachine":         func() core.Resource { return new(VirtualMachine) },
-		"virtualmachinetemplate": func() core.Resource { return new(VirtualMachineTemplate) },
-		"volume":                 func() core.Resource { return new(Volume) },
-	}
+// Create creates a new Category in the Abiquo API
+func (c *Category) Create() error {
+	return core.Create(core.NewLinker("config/categories", "category"), c)
+}
 
-	for media, factory := range resources {
-		core.RegisterMedia(media, collections[media], factory)
-	}
+// Datacenters returns the Abiquo API datacenters collection
+func Datacenters(query url.Values) *core.Collection {
+	return core.NewLinker("admin/datacenters", "datacenters").Collection(query)
+}
+
+// DeviceTypes returns the API supported SDN device types collection
+func DeviceTypes(q url.Values) *core.Collection {
+	return core.NewLinker("config/devicetypes", "devicetypes").Collection(q)
+}
+
+// Enterprises returns a slice of enterprises
+func Enterprises(query url.Values) *core.Collection {
+	return core.NewLinker("admin/enterprises", "enterprises").Collection(query)
+}
+
+// Create creates the requested enterprise
+func (e *Enterprise) Create() error {
+	return core.Create(core.NewLinker("admin/enterprises", "enterprise"), e)
+}
+
+func Licenses(query url.Values) *core.Collection {
+	return core.NewLinker("config/licenses", "licenses").Collection(query)
 }
 
 // Login returns the User resource for the client credentials
@@ -111,4 +46,52 @@ func Login() (user *User) {
 		user = resource.(*User)
 	}
 	return
+}
+
+// VMs returns a load balancer node list
+func (l *LoadBalancer) VMs() (vms core.Links) {
+	link := l.Rel("virtualmachines")
+	if link != nil {
+		resource := link.Walk()
+		vms = resource.(*core.DTO).Links
+	}
+	return
+}
+
+// Privileges retuns the API privileges collection
+func Privileges(query url.Values) *core.Collection {
+	return core.NewLinker("config/privileges", "privileges").Collection(query)
+}
+
+func RemoteServices(q url.Values) *core.Collection {
+	return core.NewLinker("admin/remoteservices", "remoteservices").Collection(q)
+}
+
+func Roles(query url.Values) *core.Collection {
+	return core.NewLinker("admin/roles", "roles").Collection(query)
+}
+
+// Create posts the *Role r to the Abiquo API roles endpoint
+func (r *Role) Create() error {
+	return core.Create(core.NewLinker("admin/roles", "role"), r)
+}
+
+// AddPrivilege adds the *Privilege rel privilege link to the *Role
+func (r *Role) AddPrivilege(p *Privilege) {
+	r.Add(p.Rel("privilege"))
+}
+
+func (s *Scope) Create() error {
+	return core.Create(core.NewLinker("admin/scopes", "scope"), s)
+}
+
+// Scopes returns the API scopes collection
+func Scopes(query url.Values) *core.Collection {
+	return core.NewLinker("admin/scopes", "scopes").Collection(query)
+}
+
+// Create creates a new VDC
+func (v *VirtualDatacenter) Create() error {
+	endpoint := core.NewLinker("cloud/virtualdatacenters", "virtualdatacenter")
+	return core.Create(endpoint, v)
 }

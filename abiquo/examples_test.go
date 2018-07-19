@@ -211,3 +211,10 @@ func ExampleVirtualMachine_Deploy() {
 	vm.Undeploy()
 	vm.Delete()
 }
+
+// ExampleEnterprise show all enterprises names
+func ExampleEnterprise() {
+	for _, e := range abiquo.Enterprises(nil).List() {
+		fmt.Println(e.URL())
+	}
+}

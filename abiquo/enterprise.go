@@ -1,9 +1,6 @@
 package abiquo
 
 import (
-	"fmt"
-	"net/url"
-
 	"github.com/abiquo/ojal/core"
 )
 
@@ -35,23 +32,6 @@ type Enterprise struct {
 	VolHard  int `json:"volHard"`
 	VLANHard int `json:"vlansHard"`
 	core.DTO
-}
-
-// Enterprises returns a slice of enterprises
-func Enterprises(query url.Values) *core.Collection {
-	return core.NewLinker("admin/enterprises", "enterprises").Collection(query)
-}
-
-// Create creates the requested enterprise
-func (e *Enterprise) Create() error {
-	return core.Create(core.NewLinker("admin/enterprises", "enterprise"), e)
-}
-
-// ExampleEnterprise show all enterprises names
-func ExampleEnterprise() {
-	for _, e := range Enterprises(nil).List() {
-		fmt.Println(e.URL())
-	}
 }
 
 type EnterpriseProperties struct {

@@ -6,6 +6,35 @@ import (
 	"github.com/abiquo/ojal/core"
 )
 
+// ActionPlan represents an Abiquo action plan DTO
+type ActionPlan struct {
+	CreatedBy   string            `json:"createdBy,omitempty"`
+	Description string            `json:"description"`
+	Entries     []ActionPlanEntry `json:"entries"`
+	Name        string            `json:"name"`
+	core.DTO
+}
+
+// ActionPlanEntry represents an Abiquo action plan entry
+type ActionPlanEntry struct {
+	Parameter     string `json:"parameter"`
+	ParameterType string `json:"parameterType"`
+	Sequence      int    `json:"sequence"`
+	Type          string `json:"type"`
+}
+
+// Alert represents an Abiquo alert DTO
+type Alarm struct {
+	Active           bool   `json:"active"`
+	TimeRangeMinutes int    `json:"timeRangeMinutes"`
+	DataPointsLimit  int    `json:"datapointslimit"`
+	Formula          string `json:"formula"`
+	Name             string `json:"name"`
+	Statistic        string `json:"statistic"`
+	Threshold        int    `json:"threshold"`
+	core.DTO
+}
+
 // VirtualMachine represents an Abiquo API VMcore.Resource
 type VirtualMachine struct {
 	Backups   []BackupPolicy    `json:"backupPolicies,omitempty"`

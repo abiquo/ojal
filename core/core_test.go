@@ -232,7 +232,7 @@ func TestDTO(t *testing.T) {
 	}.Run("edit", t)
 }
 
-func ExampleHref() {
+func ExampleResolve() {
 	fmt.Println(core.Resolve("", nil))
 	fmt.Println(core.Resolve("admin/rules", nil))
 	fmt.Println(core.Resolve("admin/rules", url.Values{"idDatacenter": {"1"}}))
@@ -243,7 +243,7 @@ func ExampleHref() {
 	// https://test:443/api/admin/rules?idDatacenter=1
 }
 
-func ExampleType() {
+func ExampleMedia() {
 	fmt.Println(core.Media(""))
 	fmt.Println(core.Media("text/plain"))
 	fmt.Println(core.Media("enterprise"))
