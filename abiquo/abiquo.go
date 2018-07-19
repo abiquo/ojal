@@ -90,6 +90,11 @@ func Scopes(query url.Values) *core.Collection {
 	return core.NewLinker("admin/scopes", "scopes").Collection(query)
 }
 
+// VirtualDatacenters returns the Abiquo virtual datacenters collection
+func VirtualDatacenters(query url.Values) *core.Collection {
+	return core.NewLinker("cloud/virtualdatacenters", "virtualdatacenters").Collection(query)
+}
+
 // Create creates a new VDC
 func (v *VirtualDatacenter) Create() error {
 	endpoint := core.NewLinker("cloud/virtualdatacenters", "virtualdatacenter")

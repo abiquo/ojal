@@ -2,6 +2,7 @@ package abiquo_test
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"sort"
 	"time"
@@ -198,18 +199,57 @@ func ExampleDatacenter() {
 }
 
 func ExampleVirtualMachine_Deploy() {
-	endpoint := core.NewLinkType("cloud/virtualdatacenters/1/virtualappliances/1", "virtualappliance")
-	template := core.NewLinkType("admin/enterprises/1/datacenterrepositories/1/virtualmachinetemplates/1", "virtualmachinetemplate")
-	vapp := endpoint.Walk().(*abiquo.VirtualAppliance)
-	vm := &abiquo.VirtualMachine{
-		DTO: core.NewDTO(template.SetRel("virtualmachinetemplate")),
+	query := url.Values{"has": {"tests"}}
+
+	vdc := abiquo.VirtualDatacenters(query).First()
+	if vdc == nil {
+		return
 	}
 
-	endpoint = vapp.Rel("virtualmachines").SetType("virtualmachine")
-	core.Create(endpoint, vm)
-	vm.Deploy()
-	vm.Undeploy()
-	vm.Delete()
+	template := vdc.Rel("templates").Collection(query).First()
+	if template == nil {
+		return
+	}
+
+	vapp := vdc.Rel("virtualappliances").Collection(query).First()
+	if vdc == nil {
+		return
+	}
+
+	vm := &abiquo.VirtualMachine{
+		DTO: core.NewDTO(template.Link().SetRel("virtualmachinetemplate")),
+	}
+
+	endpoint := vapp.Rel("virtualmachines").SetType("virtualmachine")
+	err0 := core.Create(endpoint, vm)
+	if err0 != nil {
+		return
+	}
+	fmt.Println(err0)
+
+	err1 := vm.Deploy()
+	if err1 != nil {
+		return
+	}
+	fmt.Println(err1)
+
+	err2 := vm.Undeploy()
+	if err2 != nil {
+		return
+	}
+	fmt.Println(err2)
+
+	err3 := vm.Delete()
+	if err3 != nil {
+		return
+	}
+	fmt.Println(err3)
+
+	// Output:
+	// <nil>
+	// <nil>
+	// <nil>
+	// <nil>
 }
 
 // ExampleEnterprise show all enterprises names
