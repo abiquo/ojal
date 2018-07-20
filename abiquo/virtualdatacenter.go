@@ -27,11 +27,11 @@ type FirewallRules struct {
 }
 
 type LoadBalancer struct {
-	Algorithm             string                `json:"algorithm"`
-	HealthChecks          []interface{}         `json:"healthChecks,omitempty"`
-	Name                  string                `json:"name"`
-	LoadBalancerAddresses LoadBalancerAddresses `json:"loadBalancerAddresses"`
-	RoutingRules          LoadBalancerRules     `json:"routingRules"`
+	Algorithm    string                 `json:"algorithm"`
+	HealthChecks []interface{}          `json:"healthChecks,omitempty"`
+	Name         string                 `json:"name"`
+	Addresses    *LoadBalancerAddresses `json:"loadBalancerAddresses,omitempty"`
+	Rules        *LoadBalancerRules     `json:"routingRules,omitempty"`
 	core.DTO
 }
 
@@ -59,23 +59,20 @@ type LoadBalancerRules struct {
 // Collections:
 // - virtualappliances
 type VirtualDatacenter struct {
-	// Soft limits
-	CPUSoft     int `json:"cpuSoft"`
-	DiskSoft    int `json:"diskSoftLimitInMb"`
-	PublicSoft  int `json:"publicIpsSoft"`
-	RAMSoft     int `json:"ramSoft"`
-	StorageSoft int `json:"storageSoftInMb"`
-	VLANSoft    int `json:"vlansSoft"`
-	//Hard limits
-	CPUHard     int `json:"cpuHard"`
-	DiskHard    int `json:"diskHardLimitInMb"`
-	PublicHard  int `json:"publicIpsHard"`
-	RAMHard     int `json:"ramHard"`
-	StorageHard int `json:"storageHardInMb"`
-	VLANHard    int `json:"vlansHard"`
-	//
-	Name    string   `json:"name"`
-	HVType  string   `json:"hypervisorType"`
-	Network *Network `json:"network"`
+	CPUHard     int      `json:"cpuHard"`
+	CPUSoft     int      `json:"cpuSoft"`
+	DiskHard    int      `json:"diskHardLimitInMb"`
+	DiskSoft    int      `json:"diskSoftLimitInMb"`
+	HVType      string   `json:"hypervisorType"`
+	Name        string   `json:"name"`
+	Network     *Network `json:"network"`
+	PublicHard  int      `json:"publicIpsHard"`
+	PublicSoft  int      `json:"publicIpsSoft"`
+	RAMHard     int      `json:"ramHard"`
+	RAMSoft     int      `json:"ramSoft"`
+	StorageHard int      `json:"storageHardInMb"`
+	StorageSoft int      `json:"storageSoftInMb"`
+	VLANHard    int      `json:"vlansHard"`
+	VLANSoft    int      `json:"vlansSoft"`
 	core.DTO
 }
