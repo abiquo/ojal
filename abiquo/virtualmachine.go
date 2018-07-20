@@ -25,13 +25,13 @@ type ActionPlanEntry struct {
 
 // Alert represents an Abiquo alert DTO
 type Alarm struct {
-	Active           bool   `json:"active"`
-	TimeRangeMinutes int    `json:"timeRangeMinutes"`
-	DataPointsLimit  int    `json:"datapointslimit"`
-	Formula          string `json:"formula"`
-	Name             string `json:"name"`
-	Statistic        string `json:"statistic"`
-	Threshold        int    `json:"threshold"`
+	Active           bool    `json:"active"`
+	TimeRangeMinutes int     `json:"timeRangeMinutes"`
+	DataPointsLimit  int     `json:"datapointslimit"`
+	Formula          string  `json:"formula"`
+	Name             string  `json:"name"`
+	Statistic        string  `json:"statistic"`
+	Threshold        float64 `json:"threshold"`
 	core.DTO
 }
 
