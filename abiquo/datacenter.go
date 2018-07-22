@@ -64,8 +64,8 @@ type Device struct {
 	Description string `json:"description"`
 	Endpoint    string `json:"endpoint"`
 	Name        string `json:"name"`
-	Password    string `json:"password"`
-	Username    string `json:"user"`
+	Password    string `json:"password,omitempty"`
+	Username    string `json:"user,omitempty"`
 	core.DTO
 }
 
