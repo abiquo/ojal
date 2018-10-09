@@ -23,7 +23,7 @@ type ActionPlanEntry struct {
 	Type          string `json:"type"`
 }
 
-// Alert represents an Abiquo alert DTO
+// Alarm represents an Abiquo alert DTO
 type Alarm struct {
 	Active           bool    `json:"active"`
 	TimeRangeMinutes int     `json:"timeRangeMinutes"`
@@ -40,7 +40,9 @@ type VirtualMachine struct {
 	Backups   []BackupPolicy    `json:"backupPolicies,omitempty"`
 	CPU       int               `json:"cpu,omitempty"`
 	ID        int               `json:"id,omitempty"`
+	FQDN      string            `json:"fqdn,omitempty"`
 	Label     string            `json:"label,omitempty"`
+	Layer     string            `json:"layer,omitempty"`
 	Metadata  string            `json:"metadata,omitempty"`
 	Monitored bool              `json:"monitored"`
 	Name      string            `json:"name,omitempty"`
@@ -51,15 +53,18 @@ type VirtualMachine struct {
 	core.DTO
 }
 
+// VirtualMachineMetadata is used to configure a VM metadata section
 type VirtualMachineMetadata struct {
 	Metadata VirtualMachineMetadataFields `json:"metadata"`
 	core.DTO
 }
 
+// VirtualMachineMetadataFields is used to configure a VM metadata fields
 type VirtualMachineMetadataFields struct {
 	StartupScript string `json:"startup-script,omitempty"`
 }
 
+// VirtualMachineState is used to change a VM state
 type VirtualMachineState struct {
 	State    string `json:"state"`
 	Graceful bool   `json:"gracefulShutdown,omitempty"`
@@ -146,6 +151,7 @@ func (v *VirtualMachine) AttachNIC(nic *core.Link) error {
 	return nil
 }
 
+// Delete removes an existing VirtualMachine from the API
 func (v *VirtualMachine) Delete() error {
 	return core.Remove(v)
 }

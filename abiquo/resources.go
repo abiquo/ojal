@@ -2,8 +2,9 @@ package abiquo
 
 import "github.com/abiquo/ojal/core"
 
+// HardDisk represents an hard disk resource
 type HardDisk struct {
-	Id                 int    `json:"id,omitempty"`
+	ID                 int    `json:"id,omitempty"`
 	Label              string `json:"label,omitempty"`
 	Bootable           bool   `json:"bootable,omitempty"`
 	DiskController     string `json:"diskController,omitempty"`
@@ -16,18 +17,20 @@ type HardDisk struct {
 	core.DTO
 }
 
+// Tier represents a tier resource
 type Tier struct {
 	ID                      int    `json:"id,omitempty"`
 	Name                    string `json:"name"`
 	Description             string `json:"description"`
 	Enabled                 bool   `json:"enabled"`
 	DefaultAllowed          bool   `json:"defaultAllowed"`
-	storageAllocationPolicy string `json:"storageAllocationPolicy"`
+	StorageAllocationPolicy string `json:"storageAllocationPolicy"`
 	core.DTO
 }
 
+// Volume represents a volume resource
 type Volume struct {
-	Id                 int    `json:"idomitempty"`
+	ID                 int    `json:"id,omitempty"`
 	AllowResize        bool   `json:"allowResize"`
 	SizeInMB           int    `json:"sizeInMB,omitempty"`
 	State              string `json:"state,omitempty"`

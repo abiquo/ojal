@@ -42,6 +42,7 @@ type DeviceType struct {
 	core.DTO
 }
 
+// License represents an Abiquo License resource
 type License struct {
 	Code                 string `json:"code"`
 	Expiration           string `json:"expiration,omitempty"`
@@ -51,7 +52,8 @@ type License struct {
 	core.DTO
 }
 
-type Pricing struct {
+// PricingTemplate represents an Abiquo Pricing Template resource
+type PricingTemplate struct {
 	AbstractDCPrices     []PricingDatacenter `json:"pricingAbstractDatacenters,omitempty"`
 	CostCodes            []PricingResource   `json:"pricingCostCodes,omitempty"`
 	ChargingPeriod       int                 `json:"chargingPeriod"`
@@ -67,6 +69,7 @@ type Pricing struct {
 	core.DTO
 }
 
+// PricingDatacenter represents an Abiquo Pricing Template resource datacenter entry
 type PricingDatacenter struct {
 	DatastoreTiers []PricingResource `json:"pricingDatastoreTiers,omitempty"`
 	HPAbstractDC   []PricingResource `json:"pricingHardwareProfilesAbsDc,omitempty"`
@@ -88,6 +91,7 @@ type PricingDatacenter struct {
 	core.DTO
 }
 
+// PricingResource represents an Abiquo Resource pricing entry
 type PricingResource struct {
 	Price float64 `json:"price"`
 	core.DTO

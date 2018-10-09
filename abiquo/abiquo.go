@@ -36,6 +36,7 @@ func (e *Enterprise) Create() error {
 	return core.Create(core.NewLinker("admin/enterprises", "enterprise"), e)
 }
 
+// Licenses returns the collection of licenses in the platform
 func Licenses(query url.Values) *core.Collection {
 	return core.NewLinker("config/licenses", "licenses").Collection(query)
 }
@@ -63,10 +64,12 @@ func Privileges(query url.Values) *core.Collection {
 	return core.NewLinker("config/privileges", "privileges").Collection(query)
 }
 
-func RemoteServices(q url.Values) *core.Collection {
-	return core.NewLinker("admin/remoteservices", "remoteservices").Collection(q)
+// RemoteServices returns the Remote Services collection in the platform
+func RemoteServices(query url.Values) *core.Collection {
+	return core.NewLinker("admin/remoteservices", "remoteservices").Collection(query)
 }
 
+// Roles returns the roles collection in the platform
 func Roles(query url.Values) *core.Collection {
 	return core.NewLinker("admin/roles", "roles").Collection(query)
 }
@@ -81,6 +84,7 @@ func (r *Role) AddPrivilege(p *Privilege) {
 	r.Add(p.Rel("privilege"))
 }
 
+// Create posts the *Scope s to the scopes endpoint
 func (s *Scope) Create() error {
 	return core.Create(core.NewLinker("admin/scopes", "scope"), s)
 }

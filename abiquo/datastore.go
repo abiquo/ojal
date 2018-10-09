@@ -2,6 +2,7 @@ package abiquo
 
 import "github.com/abiquo/ojal/core"
 
+// Datastore represents a datastore resource
 type Datastore struct {
 	UUID      string `json:"datastoreUUID"`
 	Directory string `json:"directory"`
@@ -14,6 +15,7 @@ type Datastore struct {
 	core.DTO
 }
 
+// DatastoreTier represents a datastore tier resource
 type DatastoreTier struct {
 	DefaultAllowed       bool   `json:"defaultAllowed"`
 	DefaultForDatacenter bool   `json:"defaultForDatacenter"`

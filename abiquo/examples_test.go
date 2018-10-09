@@ -58,8 +58,8 @@ func init() {
 	}
 }
 
-// ExampleCollection shows how to retrieve the users name from an enterpirse
-func ExampleCollection() {
+// ExampleUser shows how to retrieve the users name from an enterprise
+func ExampleUser() {
 	users := []string{}
 	collection := core.NewLinker("admin/enterprises/1/users", "users").Collection(nil)
 	for collection.Next() {

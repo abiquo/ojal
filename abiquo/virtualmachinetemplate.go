@@ -10,7 +10,7 @@ type VirtualMachineTemplate struct {
 	EnableDisksHotReconfigure        bool        `json:"enableDisksHotReconfigure"`
 	EnableNicsHotReconfigure         bool        `json:"enableNicsHotReconfigure"`
 	EnableOnlyHPRecommended          bool        `json:"enableOnlyHPRecommended"`
-	EnableRamHotAdd                  bool        `json:"enableRamHotAdd"`
+	EnableRAMHotAdd                  bool        `json:"enableRamHotAdd"`
 	EnableRemoteAccessHotReconfigure bool        `json:"enableRemoteAccessHotReconfigure"`
 	GenerateGuestInitialPassword     bool        `json:"GenerateGuestInitialPassword"`
 	EthernetDriverType               string      `json:"ethernetDriverType,omitempty"`

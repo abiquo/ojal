@@ -2,6 +2,7 @@ package abiquo
 
 import "github.com/abiquo/ojal/core"
 
+// BackupConfiguration represents a backup configuration resource
 type BackupConfiguration struct {
 	Subtype string   `json:"subtype"`
 	Time    string   `json:"time"`
@@ -10,6 +11,7 @@ type BackupConfiguration struct {
 	Sources []string `json:"sources,omitempty"`
 }
 
+// BackupManager represents a datacenter backup manager resource
 type BackupManager struct {
 	Type     string `json:"type"`
 	Name     string `json:"name"`
@@ -18,6 +20,7 @@ type BackupManager struct {
 	Password string `json:"password"`
 }
 
+// BackupPluginType represents a backup plugin type resource
 type BackupPluginType struct {
 	Constraints map[string]string        `json:"constraints"`
 	Name        string                   `json:"name"`

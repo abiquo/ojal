@@ -6,6 +6,7 @@ import (
 	"github.com/abiquo/ojal/core"
 )
 
+// Location represents a location resource
 type Location struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`

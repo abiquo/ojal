@@ -4,7 +4,7 @@ import (
 	"github.com/abiquo/ojal/core"
 )
 
-// Enterprise represents an Abiquo Enterprisecore.Resource
+// Enterprise represents an enterprise resource
 //
 // Collections:
 // - users
@@ -34,12 +34,13 @@ type Enterprise struct {
 	core.DTO
 }
 
+// EnterpriseProperties represents an enterprise properties resource
 type EnterpriseProperties struct {
 	Properties map[string]string `json:"properties"`
 	core.DTO
 }
 
-// Limit represents an abiquo enterprise limit
+// Limit represents an enterprise limit
 type Limit struct {
 	CPUHard   int  `json:"cpuHard"`
 	CPUSoft   int  `json:"cpuSoft"`

@@ -2,6 +2,7 @@ package abiquo
 
 import "github.com/abiquo/ojal/core"
 
+// StorageDevice represents a storage device resource
 type StorageDevice struct {
 	ID             int64  `json:"id,omitempty"`
 	Name           string `json:"name"`
@@ -13,6 +14,7 @@ type StorageDevice struct {
 	core.DTO
 }
 
+// StoragePool represents a storage pool resource
 type StoragePool struct {
 	IDStorage         string `json:"idStorage,omitempty"`
 	Name              string `json:"name"`
