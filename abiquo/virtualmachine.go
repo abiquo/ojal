@@ -21,6 +21,7 @@ type ActionPlanEntry struct {
 	ParameterType string `json:"parameterType"`
 	Sequence      int    `json:"sequence"`
 	Type          string `json:"type"`
+	core.DTO
 }
 
 // Alarm represents an Abiquo alert DTO
