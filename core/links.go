@@ -68,6 +68,14 @@ type DTO struct {
 	Links `json:"links,omitempty"`
 }
 
+// Exists checks whether the self/edit link on the DTO exists on the API
+func (d *DTO) Exists() (exists bool, err error) {
+	if d != nil {
+		exists, err = d.Link().Exists()
+	}
+	return
+}
+
 // Add adds the Link l as rel to the *DTO Links
 // If the link is nil, the *DTO Links do not change
 func (d *DTO) Add(l *Link) {

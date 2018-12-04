@@ -93,3 +93,13 @@ func (l *Link) Walk() (resource Resource) {
 	}
 	return
 }
+
+// Exists returns whether a link is a valid resource in the API
+func (l *Link) Exists() (exists bool, err error) {
+	if l != nil {
+		var resource interface{}
+		err = Read(l, resource)
+		exists = err == nil
+	}
+	return
+}
