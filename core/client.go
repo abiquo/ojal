@@ -52,21 +52,25 @@ func (o *oauth) Do(request *http.Request) (*http.Response, error) {
 
 // Init initializes Abiquo API client
 func Init(api string, auth interface{}) (err error) {
-	if location, err = url.Parse(api + "/"); err == nil {
-		switch t := auth.(type) {
-		case Basic:
-			client = &basic{t, &http.Client{}}
-		case Oauth:
-			config := oauth1.NewConfig(t.APIKey, url.QueryEscape(t.APISecret))
-			token := oauth1.NewToken(t.Token, url.QueryEscape(t.TokenSecret))
-			client = &oauth{config.Client(oauth1.NoContext, token)}
-		}
-
-		var r *Reply
-		if r, err = Rest(nil, Get(Resolve("version", nil), "text/plain")); r.Ok() {
-			version = strings.Join(strings.Split(string(r.result), ".")[0:2], ".")
-		}
+	location, err = url.Parse(api + "/")
+	if err != nil {
+		return
 	}
+
+	switch t := auth.(type) {
+	case Basic:
+		client = &basic{t, &http.Client{}}
+	case Oauth:
+		config := oauth1.NewConfig(t.APIKey, url.QueryEscape(t.APISecret))
+		token := oauth1.NewToken(t.Token, url.QueryEscape(t.TokenSecret))
+		client = &oauth{config.Client(oauth1.NoContext, token)}
+	}
+
+	reply, err := Rest(nil, Get(Resolve("version", nil), "text/plain"))
+	if reply.Ok() {
+		version = strings.Join(strings.Split(string(reply.result), ".")[0:2], ".")
+	}
+
 	return
 }
 
