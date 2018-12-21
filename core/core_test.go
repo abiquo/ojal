@@ -53,6 +53,7 @@ func init() {
 		"ABQ_ENDPOINT":     os.Getenv("ABQ_ENDPOINT"),
 		"ABQ_USERNAME":     os.Getenv("ABQ_USERNAME"),
 		"ABQ_PASSWORD":     os.Getenv("ABQ_PASSWORD"),
+		"ABQ_VERSION":      os.Getenv("ABQ_VERSION"),
 		"ABQ_TOKEN":        os.Getenv("ABQ_TOKEN"),
 		"ABQ_TOKEN_SECRET": os.Getenv("ABQ_TOKEN_SECRET"),
 		"ABQ_API_SECRET":   os.Getenv("ABQ_API_SECRET"),
@@ -92,7 +93,7 @@ func TestInit(t *testing.T) {
 		{"err1", err1 == nil, false},
 		{"err2", err2 == nil, true},
 		{"err3", err3 == nil, true},
-		{"Version()", core.Version(), "4.2"},
+		{"Version()", core.Version(), environment["ABQ_VERSION"]},
 	}.Run("Init", t)
 
 	ts := time.Now().Unix()
@@ -110,17 +111,13 @@ func TestInit(t *testing.T) {
 	core.RegisterMedia("user", "users", newDTO)
 }
 
-func ExampleLink() {
-	fmt.Println(none.URL())
-	fmt.Println(none.Rel)
-	fmt.Println(none.Title)
-	fmt.Println(none.Media())
-
-	// Output:
-	// https://test:443/api/none
-	// none
-	// none
-	// application/vnd.abiquo.none+json
+func TestLink(t *testing.T) {
+	battery{
+		{"URL()", none.URL(), core.Resolve("none", nil)},
+		{"Media()", none.Media(), core.Media("none")},
+		{"Title", none.Title, "none"},
+		{"Rel", none.Rel, "none"},
+	}.Run("link", t)
 }
 
 func TestObject(t *testing.T) {
@@ -234,15 +231,20 @@ func TestDTO(t *testing.T) {
 	}.Run("edit", t)
 }
 
-func ExampleResolve() {
-	fmt.Println(core.Resolve("", nil))
-	fmt.Println(core.Resolve("admin/rules", nil))
-	fmt.Println(core.Resolve("admin/rules", url.Values{"idDatacenter": {"1"}}))
+func resolve(path string) string {
+	return environment["ABQ_ENDPOINT"] + "/" + path
+}
 
-	// Output:
-	// https://test:443/api/
-	// https://test:443/api/admin/rules
-	// https://test:443/api/admin/rules?idDatacenter=1
+func TestResolve(t *testing.T) {
+	null := core.Resolve("", nil)
+	path := core.Resolve("admin/rules", nil)
+	query := core.Resolve("admin/rules", url.Values{"idDatacenter": {"1"}})
+
+	battery{
+		{"null", null, resolve("")},
+		{"path", path, resolve("admin/rules")},
+		{"query", query, resolve("admin/rules?idDatacenter=1")},
+	}.Run("resolve", t)
 }
 
 func ExampleMedia() {
@@ -301,7 +303,7 @@ func ExampleCollection_First() {
 	// Abiquo
 }
 
-func ExampleCrud() {
+func ExampleRemove() {
 	var (
 		create1 = core.Create(enterprise, enterprise0)
 		create2 = core.Create(enterprise, enterprise0)
