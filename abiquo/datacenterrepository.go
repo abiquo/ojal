@@ -1,6 +1,8 @@
 package abiquo
 
 import (
+	"encoding/json"
+	"errors"
 	"net/url"
 	"strings"
 
@@ -17,16 +19,61 @@ type DatacenterRepository struct {
 	core.DTO
 }
 
-// Upload uploads an OVA to the *DatacenterRepository, and returns the *VirtualMachineTemplate DTO
-func (d *DatacenterRepository) Upload(file string) (v *VirtualMachineTemplate, err error) {
-	endpoint := d.Rel("applianceManagerRepositoryUri").Href + "/templates"
-	reply, err := core.Upload(endpoint, file, "")
-	if err == nil {
-		path := strings.Join(strings.Split(reply.Location(), "/")[7:], "/")
-		templates := d.Rel("virtualmachinetemplates").Collection(url.Values{"path": {path}})
-		if vmt := templates.First(); vmt != nil {
-			v = vmt.(*VirtualMachineTemplate)
-		}
+// DiskDefinition represents a disk being uploaded
+type DiskDefinition struct {
+	Bootable           bool   `json:"bootable"`
+	DiskController     string `json:"diskController"`
+	DiskControllerType string `json:"diskControllerType,omitempty"`
+	DiskFileFormat     string `json:"diskFileFormat"`
+	DiskFileSize       int    `json:"diskFileSize"`
+	DiskFilePath       string `json:"diskFilePath"`
+	Label              string `json:"label"`
+	RequiredHDinMB     int    `json:"requiredHDInMB"`
+	Sequence           int    `json:"sequence"`
+}
+
+// TemplateDefinition represents a template being uploaded
+type TemplateDefinition struct {
+	CategoryName             string           `json:"categoryName"`
+	Description              string           `json:"description"`
+	Disks                    []DiskDefinition `json:"disks"`
+	EthernetDriverType       string           `json:"ethernetDriverType"`
+	LoginUser                string           `json:"loginUser,omitempty"`
+	LoginPassword            string           `json:"loginPassword,omitempty"`
+	Name                     string           `json:"name"`
+	NewEmptyDiskCapacityInMB string           `json:"newEmptyDiskCapacityInMb"`
+	OSType                   string           `json:"osType,omitempty"`
+	OSVersion                string           `json:"osVersion,omitempty"`
+	RequiredCPU              int              `json:"requiredCpu"`
+	RequiredRAMInMB          int              `json:"requiredRamInMB"`
+}
+
+func (d *DatacenterRepository) upload(file, info string) (*VirtualMachineTemplate, error) {
+	href := d.Rel("applianceManagerRepositoryUri").Href + "/templates"
+	reply, err := core.Upload(href, file, info)
+	if err != nil {
+		return nil, err
 	}
-	return
+	path := strings.Join(strings.Split(reply.Location(), "/")[7:], "/")
+	templates := d.Rel("virtualmachinetemplates").Collection(url.Values{"path": {path}})
+	resource := templates.First()
+	if resource == nil {
+		return nil, errors.New("template not found after upload")
+	}
+	return resource.(*VirtualMachineTemplate), nil
+}
+
+// UploadOVA uploads an OVA to the *DatacenterRepository, and returns the *VirtualMachineTemplate DTO
+func (d *DatacenterRepository) UploadOVA(file string) (v *VirtualMachineTemplate, err error) {
+	return d.upload(file, "")
+}
+
+// UploadTemplate uploads an OVA to the *DatacenterRepository, and returns the *VirtualMachineTemplate DTO
+func (d *DatacenterRepository) UploadTemplate(file string, definition TemplateDefinition) (v *VirtualMachineTemplate, err error) {
+	bytes, err := json.Marshal(definition)
+	if err != nil {
+		return nil, err
+	}
+	info := string(bytes)
+	return d.upload(file, info)
 }
