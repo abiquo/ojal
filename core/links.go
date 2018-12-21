@@ -10,6 +10,7 @@ func (l Links) Rel(rel string) (link *Link) {
 	})
 }
 
+// TestLink verifies if a link fullfils a condition
 type TestLink func(l *Link) bool
 
 // Filter returns the links that meet the condition
@@ -22,7 +23,7 @@ func (l Links) Filter(t TestLink) (links Links) {
 	return
 }
 
-// Filter returns the links that meet the condition
+// Find returns the links that meet the condition
 func (l Links) Find(t TestLink) (link *Link) {
 	for _, link := range l {
 		if t(link) {
