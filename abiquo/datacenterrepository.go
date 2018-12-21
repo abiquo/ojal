@@ -20,7 +20,7 @@ type DatacenterRepository struct {
 // Upload uploads an OVA to the *DatacenterRepository, and returns the *VirtualMachineTemplate DTO
 func (d *DatacenterRepository) Upload(file string) (v *VirtualMachineTemplate, err error) {
 	endpoint := d.Rel("applianceManagerRepositoryUri").Href + "/templates"
-	reply, err := core.Upload(endpoint, file)
+	reply, err := core.Upload(endpoint, file, "")
 	if err == nil {
 		path := strings.Join(strings.Split(reply.Location(), "/")[7:], "/")
 		templates := d.Rel("virtualmachinetemplates").Collection(url.Values{"path": {path}})

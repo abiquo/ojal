@@ -48,6 +48,8 @@ var (
 
 func init() {
 	environment = map[string]string{
+		"ABQ_DISK":         os.Getenv("ABQ_DISK"),
+		"ABQ_TEMPLATES":    os.Getenv("ABQ_TEMPLATES"),
 		"ABQ_ENDPOINT":     os.Getenv("ABQ_ENDPOINT"),
 		"ABQ_USERNAME":     os.Getenv("ABQ_USERNAME"),
 		"ABQ_PASSWORD":     os.Getenv("ABQ_PASSWORD"),
@@ -254,20 +256,6 @@ func ExampleMedia() {
 	// application/vnd.abiquo.enterprise+json
 }
 
-func ExampleUpload() {
-	templates := "https://test:443/am/erepos/1/templates"
-	reply, err := core.Upload(templates, environment["ABQ_OVA"])
-
-	fmt.Println(err)
-	fmt.Println(reply.Ok())
-	fmt.Println(reply.Location() != "")
-
-	// Output:
-	// <nil>
-	// true
-	// true
-}
-
 func TestCollection(t *testing.T) {
 	collection := enterprises.Collection(nil)
 	count := 0
@@ -368,4 +356,37 @@ func ExampleResources_Filter() {
 	// Output:
 	// Abiquo
 	// 1
+}
+
+func TestUpload(t *testing.T) {
+	reply, err := core.Upload(environment["ABQ_TEMPLATES"], environment["ABQ_OVA"], "")
+
+	battery{
+		{"err", err, nil},
+		{"Ok()", reply.Ok(), true},
+		{"Location()", reply.Location() != "", true},
+	}.Run("ova", t)
+
+	reply, err = core.Upload(environment["ABQ_TEMPLATES"], environment["ABQ_DISK"], `{
+		"categoryName" : "Others",
+		"description"  : "ojal ExampleUploadTemplate",
+		"disks" : [{
+			"bootable"       : true,
+			"diskController" : "IDE",
+			"diskFileFormat" : "UNKNOWN",
+			"diskFilePath"   : "disk1",
+			"diskFileSize"   : 1024000,
+			"requiredHDInMB" : 1024000,
+			"sequence"       : 0
+		}],
+		"name"             : "uploadTemplate",
+		"requiredCpu"      : 1,
+		"requiredRamInMB"  : 1024
+	}`)
+
+	battery{
+		{"err", err, nil},
+		{"Ok()", reply.Ok(), true},
+		{"Location()", reply.Location() != "", true},
+	}.Run("disk", t)
 }
