@@ -39,6 +39,16 @@ type LoadBalancer struct {
 	core.DTO
 }
 
+// VMs returns a load balancer node list
+func (l *LoadBalancer) VMs() (vms core.Links, err error) {
+	resource, err := l.Walk("virtualmachines")
+	if err != nil {
+		return
+	}
+	vms = resource.(*core.DTO).Links
+	return
+}
+
 // LoadBalancerAddress defines a load balancer address resource
 type LoadBalancerAddress struct {
 	Endpoint   string `json:"endpoint,omitempty"`

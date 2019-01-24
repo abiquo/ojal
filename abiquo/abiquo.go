@@ -51,16 +51,6 @@ func Login() (user *User, err error) {
 	return
 }
 
-// VMs returns a load balancer node list
-func (l *LoadBalancer) VMs() (vms core.Links, err error) {
-	resource, err := l.Walk("virtualmachines")
-	if err != nil {
-		return
-	}
-	vms = resource.(*core.DTO).Links
-	return
-}
-
 // Privileges retuns the API privileges collection
 func Privileges(query url.Values) *core.Collection {
 	return core.NewLinker("config/privileges", "privileges").Collection(query)
