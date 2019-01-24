@@ -12,9 +12,11 @@ type VirtualMachineTemplate struct {
 	EnableOnlyHPRecommended          bool        `json:"enableOnlyHPRecommended"`
 	EnableRAMHotAdd                  bool        `json:"enableRamHotAdd"`
 	EnableRemoteAccessHotReconfigure bool        `json:"enableRemoteAccessHotReconfigure"`
-	GenerateGuestInitialPassword     bool        `json:"GenerateGuestInitialPassword"`
+	GenerateGuestInitialPassword     bool        `json:"generateGuestInitialPassword"`
+	GuestSetup                       string      `json:"guestSetup,omitempty"`
 	EthernetDriverType               string      `json:"ethernetDriverType,omitempty"`
 	ID                               string      `json:"id,omitempty"`
+	LoginUser                        string      `json:"loginUser,omitempty"`
 	Name                             string      `json:"name"`
 	IconURL                          string      `json:"iconUrl,omitempty"`
 	Description                      string      `json:"description"`
