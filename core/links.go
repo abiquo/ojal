@@ -85,6 +85,11 @@ func (d *DTO) Add(l *Link) {
 	}
 }
 
+// AddTypeRel ...
+func (d *DTO) AddTypeRel(href, media string) {
+	d.Add(NewLinkType(href, media).SetRel(media))
+}
+
 // NewDTO returns a DTO Links
 func NewDTO(links ...*Link) (d DTO) {
 	for _, link := range links {
@@ -94,6 +99,6 @@ func NewDTO(links ...*Link) (d DTO) {
 }
 
 // Walk returns the DTO rel Resource
-func (d *DTO) Walk(rel string) Resource {
+func (d *DTO) Walk(rel string) (Resource, error) {
 	return d.Rel(rel).Walk()
 }

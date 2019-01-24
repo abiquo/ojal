@@ -330,9 +330,12 @@ func ExampleRemove() {
 
 func TestWalk(t *testing.T) {
 	endpoint := core.NewLinker("admin/enterprises/1/users/1", "user")
-	enterprise := endpoint.Walk().Walk("enterprise")
+	username, err1 := endpoint.Walk()
+	enterprise, err2 := username.Walk("enterprise")
 
 	battery{
+		{"err1", err1, nil},
+		{"err2", err2, nil},
 		{"nil", enterprise == nil, false},
 		{"name", enterprise.(*dto).Name, "Abiquo"},
 	}.Run("walk", t)

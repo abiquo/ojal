@@ -6,8 +6,11 @@ type Resource interface {
 	Link() *Link
 	Rel(string) *Link
 	Add(*Link)
-	Walk(string) Resource
+	Walk(string) (Resource, error)
 }
+
+// Test validates if a resource fulfills a condition
+type Test func(r Resource) bool
 
 // Resources represents an Abiquo API collection elements
 type Resources []Resource

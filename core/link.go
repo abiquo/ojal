@@ -1,6 +1,7 @@
 package core
 
 import (
+	"errors"
 	"net/url"
 )
 
@@ -84,13 +85,18 @@ func (l *Link) Collection(query url.Values) *Collection {
 }
 
 // Walk returns the resource the link is pointing to
-func (l *Link) Walk() (resource Resource) {
-	if l != nil {
-		r := resources[l.Type]()
-		if err := Read(l, r); err == nil {
-			resource = r
-		}
+func (l *Link) Walk() (resource Resource, err error) {
+	if l == nil {
+		return nil, errors.New("Walk: link is nil")
 	}
+
+	r := resources[l.Type]()
+	err = Read(l, r)
+	if err != nil {
+		return
+	}
+
+	resource = r
 	return
 }
 
@@ -102,4 +108,9 @@ func (l *Link) Exists() (exists bool, err error) {
 		exists = err == nil
 	}
 	return
+}
+
+// ToHref ...
+func (l *Link) ToHref() string {
+	return l.URL()
 }

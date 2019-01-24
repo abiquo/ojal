@@ -100,15 +100,19 @@ func ExampleCategory() {
 }
 
 func ExampleLogin() {
-	user := abiquo.Login()
-	enterprise := user.Rel("enterprise").Walk()
+	user, err1 := abiquo.Login()
+	enterprise, err2 := user.Walk("enterprise")
 
+	fmt.Println(err1)
+	fmt.Println(err2)
 	fmt.Println(user == nil)
 	fmt.Println(enterprise == nil)
 	fmt.Println(user.Name)
 	fmt.Println(enterprise.Link().Title)
 
 	// Output:
+	// <nil>
+	// <nil>
 	// false
 	// false
 	// Cloud

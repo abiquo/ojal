@@ -11,7 +11,7 @@ type Endpoint interface {
 // Linker represents links which can generate collections or being walked
 type Linker interface {
 	Endpoint
-	Walk() Resource
+	Walk() (Resource, error)
 	Collection(q url.Values) *Collection
 }
 

@@ -42,20 +42,22 @@ func Licenses(query url.Values) *core.Collection {
 }
 
 // Login returns the User resource for the client credentials
-func Login() (user *User) {
-	if resource := core.NewLinker("login", "user").Walk(); resource != nil {
-		user = resource.(*User)
+func Login() (user *User, err error) {
+	resource, err := core.NewLinker("login", "user").Walk()
+	if err != nil {
+		return
 	}
+	user = resource.(*User)
 	return
 }
 
 // VMs returns a load balancer node list
-func (l *LoadBalancer) VMs() (vms core.Links) {
-	link := l.Rel("virtualmachines")
-	if link != nil {
-		resource := link.Walk()
-		vms = resource.(*core.DTO).Links
+func (l *LoadBalancer) VMs() (vms core.Links, err error) {
+	resource, err := l.Walk("virtualmachines")
+	if err != nil {
+		return
 	}
+	vms = resource.(*core.DTO).Links
 	return
 }
 

@@ -59,8 +59,6 @@ func NewCollection(link *Link, query url.Values) (collection *Collection) {
 	return
 }
 
-type Test func(r Resource) bool
-
 // List returns an slice with all the collection elements
 func (c *Collection) List() (resources Resources) {
 	for c.Next() {
