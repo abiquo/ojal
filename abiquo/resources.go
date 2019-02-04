@@ -2,6 +2,13 @@ package abiquo
 
 import "github.com/abiquo/ojal/core"
 
+// Disk is the shared volume/harddisk interface
+type Disk interface {
+	Link() *core.Link
+	Controller() string
+	ControllerType() string
+}
+
 // HardDisk represents an hard disk resource
 type HardDisk struct {
 	ID                 int    `json:"id,omitempty"`
@@ -16,6 +23,12 @@ type HardDisk struct {
 	UUID               string `json:"uuid,omitempty"`
 	core.DTO
 }
+
+// Controller ...
+func (h *HardDisk) Controller() string { return h.DiskController }
+
+// ControllerType ...
+func (h *HardDisk) ControllerType() string { return h.DiskControllerType }
 
 // Tier represents a tier resource
 type Tier struct {
@@ -41,3 +54,9 @@ type Volume struct {
 	DiskController     string `json:"diskController"`
 	core.DTO
 }
+
+// Controller ...
+func (v *Volume) Controller() string { return v.DiskController }
+
+// ControllerType ...
+func (v *Volume) ControllerType() string { return v.DiskControllerType }
