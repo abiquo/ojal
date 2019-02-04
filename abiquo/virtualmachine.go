@@ -70,13 +70,14 @@ type VirtualMachineMetadataFields struct {
 
 // VirtualMachineState is used to change a VM state
 type VirtualMachineState struct {
-	State    string `json:"state"`
-	Graceful bool   `json:"gracefulShutdown,omitempty"`
+	State            string `json:"state,omitempty"`
+	GracefulShutdown bool   `json:"gracefulShutdown,omitempty"`
+	core.DTO
 }
 
 // Reconfigure reconfigures v
 func (v *VirtualMachine) Reconfigure() (err error) {
-	_, err = core.Rest(v, core.Put(v.URL(), "acceptedrequest", v.Media(), v))
+	_, err = core.Rest(nil, core.Put(v.URL(), "acceptedrequest", v.Media(), v))
 	return
 }
 
@@ -100,13 +101,25 @@ func (v *VirtualMachine) Undeploy() (err error) {
 	))
 }
 
+// Reboot the VM
+func (v *VirtualMachine) Reboot() (err error) {
+	return NewTask(core.Post(
+		v.Rel("reset").Href,
+		"acceptedrequest",
+		"application/json",
+		nil,
+	))
+}
+
 // Off powers off the VM
 func (v *VirtualMachine) Off() (err error) {
 	return NewTask(core.Put(
 		v.Rel("state").Href,
 		"acceptedrequest",
 		"virtualmachinestate",
-		map[string]interface{}{"state": "OFF"},
+		&VirtualMachineState{
+			State: "OFF",
+		},
 	))
 }
 
@@ -116,7 +129,9 @@ func (v *VirtualMachine) On() (err error) {
 		v.Rel("state").Href,
 		"acceptedrequest",
 		"virtualmachinestate",
-		map[string]interface{}{"state": "ON"},
+		&VirtualMachineState{
+			State: "ON",
+		},
 	))
 }
 
@@ -140,10 +155,10 @@ func (v *VirtualMachine) NICs() (nics []*core.Link) {
 }
 
 // AttachDisk add a disk link to the *VirtualMachine in the last position
-func (v *VirtualMachine) AttachDisk(hd *HardDisk) error {
-	diskLink := hd.Link().SetRel(fmt.Sprintf("disk%v", len(v.Disks())))
-	diskLink.DiskControllerType = hd.DiskControllerType
-	diskLink.DiskController = hd.DiskController
+func (v *VirtualMachine) AttachDisk(disk Disk) error {
+	diskLink := disk.Link().SetRel(fmt.Sprintf("disk%v", len(v.Disks())))
+	diskLink.DiskControllerType = disk.ControllerType()
+	diskLink.DiskController = disk.Controller()
 	v.Add(diskLink)
 	return nil
 }
@@ -158,4 +173,23 @@ func (v *VirtualMachine) AttachNIC(nic *core.Link) error {
 // Delete removes an existing VirtualMachine from the API
 func (v *VirtualMachine) Delete() error {
 	return core.Remove(v)
+}
+
+// Shutdown powers off the VM
+func (v *VirtualMachine) Shutdown() (err error) {
+	return NewTask(core.Put(
+		v.Rel("state").Href,
+		"acceptedrequest",
+		"virtualmachinestate",
+		&VirtualMachineState{
+			GracefulShutdown: true,
+			State:            "OFF",
+		},
+	))
+}
+
+// GetState return v VirtualMachine state
+func (v *VirtualMachine) GetState() (state VirtualMachineState, err error) {
+	err = core.Read(v.Rel("state"), &state)
+	return
 }
