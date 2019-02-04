@@ -126,3 +126,27 @@ type VirtualDatacenter struct {
 	VLANSoft    int      `json:"vlansSoft"`
 	core.DTO
 }
+
+// CreateHardDisk ...
+func (v *VirtualDatacenter) CreateHardDisk(dto *HardDisk) (hardDisk *HardDisk, err error) {
+	hardDisk = &HardDisk{}
+	*hardDisk = *dto
+	err = core.Create(v.Rel("disks").SetType("harddisk"), hardDisk)
+	return
+}
+
+// CreateVolume ...
+func (v *VirtualDatacenter) CreateVolume(dto *Volume) (volume *Volume, err error) {
+	volume = &Volume{}
+	*volume = *dto
+	err = core.Create(v.Rel("volumes").SetType("volume"), volume)
+	return
+}
+
+// PrivateNetworks ...
+func (v *VirtualDatacenter) PrivateNetworks() (networks []*Network) {
+	collectionToList(v, "privatenetworks", func(r core.Resource) {
+		networks = append(networks, r.(*Network))
+	})
+	return
+}

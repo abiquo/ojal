@@ -30,3 +30,18 @@ type IP struct {
 	IP         string `json:"ip"`
 	core.DTO
 }
+
+// NewIP ...
+func (n *Network) NewIP() *core.Link {
+	var media string
+	switch n.Type {
+	case "INTERNAL":
+		media = "privateip"
+	case "EXTERNAL":
+		media = "externalip"
+	default:
+		panic("*Network.NewIP for *Network.Type=" + n.Type)
+	}
+
+	return n.Rel("ips").SetType(media).SetTitle("newIp")
+}

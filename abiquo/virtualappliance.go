@@ -60,3 +60,12 @@ type VirtualAppliance struct {
 	Name string `json:"name"`
 	core.DTO
 }
+
+// CreateVM creates a new VM in the Vapp
+func (v *VirtualAppliance) CreateVM(vmt string, dto *VirtualMachine) (vm *VirtualMachine, err error) {
+	vm = &VirtualMachine{}
+	*vm = *dto
+	vm.AddTypeRel(vmt, "virtualmachinetemplate")
+	err = core.Create(v.Rel("virtualmachines").SetType("virtualmachine"), vm)
+	return
+}
