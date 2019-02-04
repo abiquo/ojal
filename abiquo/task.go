@@ -18,11 +18,14 @@ type Task struct {
 // NewTask creates a new API task from the call
 func NewTask(call *core.Call) (err error) {
 	reply := new(core.DTO)
-	if _, err = core.Rest(reply, call); err == nil {
-		endpoint := reply.Rel("status").SetType("taskextended")
-		if result := taskWait(endpoint); result != "FINISHED_SUCCESSFULLY" {
-			err = fmt.Errorf("task: %v %v", endpoint.Href, result)
-		}
+	_, err = core.Rest(reply, call)
+	if err != nil {
+		return
+	}
+
+	endpoint := reply.Rel("status").SetType("taskextended")
+	if result := taskWait(endpoint); result != "FINISHED_SUCCESSFULLY" {
+		err = fmt.Errorf("task: %v %v", endpoint.Href, result)
 	}
 	return
 }
