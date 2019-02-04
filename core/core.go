@@ -18,6 +18,7 @@ var validCodes = map[string]map[int]bool{
 	http.MethodPut: map[int]bool{
 		http.StatusOK:        true,
 		http.StatusCreated:   true,
+		http.StatusAccepted:  true,
 		http.StatusNoContent: true,
 	},
 	http.MethodGet: map[int]bool{
