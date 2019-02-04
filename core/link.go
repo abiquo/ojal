@@ -3,6 +3,7 @@ package core
 import (
 	"errors"
 	"net/url"
+	"strings"
 )
 
 // Link represents an Abiquo link
@@ -52,7 +53,10 @@ func (l *Link) Media() (media string) {
 
 // IsMedia returns whether the link is of media Type
 func (l *Link) IsMedia(media string) bool {
-	return l.Type == Media(media)
+	if l != nil {
+		return strings.HasPrefix(l.Type, Media(media))
+	}
+	return false
 }
 
 // SetType retuns a link clone with the specified type value
