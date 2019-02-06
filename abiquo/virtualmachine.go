@@ -38,22 +38,23 @@ type Alarm struct {
 
 // VirtualMachine represents an Abiquo API VMcore.Resource
 type VirtualMachine struct {
-	Backups     []BackupPolicy    `json:"backupPolicies,omitempty"`
-	CPU         int               `json:"cpu,omitempty"`
-	ID          int               `json:"id,omitempty"`
-	FQDN        string            `json:"fqdn,omitempty"`
-	Label       string            `json:"label,omitempty"`
-	Layer       string            `json:"layer,omitempty"`
-	Metadata    string            `json:"metadata,omitempty"`
-	Monitored   bool              `json:"monitored"`
-	Name        string            `json:"name,omitempty"`
-	Password    string            `json:"password,omitempty"`
-	RAM         int               `json:"ram,omitempty"`
-	State       string            `json:"state,omitempty"`
-	Variables   map[string]string `json:"variables,omitempty"`
-	VdrpEnabled bool              `json:"vdrpEnabled,omitempty"`
-	VdrpPort    int               `json:"vdrpPort,omitempty"`
-	UUID        string            `json:"uuid,omitempty"`
+	Backups         []BackupPolicy    `json:"backupPolicies,omitempty"`
+	CPU             int               `json:"cpu,omitempty"`
+	ID              int               `json:"id,omitempty"`
+	FQDN            string            `json:"fqdn,omitempty"`
+	Label           string            `json:"label,omitempty"`
+	LastSynchronize int64             `json:"lastSynchronize"`
+	Layer           string            `json:"layer,omitempty"`
+	Metadata        string            `json:"metadata,omitempty"`
+	Monitored       bool              `json:"monitored"`
+	Name            string            `json:"name,omitempty"`
+	Password        string            `json:"password,omitempty"`
+	RAM             int               `json:"ram,omitempty"`
+	State           string            `json:"state,omitempty"`
+	Variables       map[string]string `json:"variables,omitempty"`
+	VdrpEnabled     bool              `json:"vdrpEnabled,omitempty"`
+	VdrpPort        int               `json:"vdrpPort,omitempty"`
+	UUID            string            `json:"uuid,omitempty"`
 	core.DTO
 }
 
