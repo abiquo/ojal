@@ -159,7 +159,7 @@ func TestCall(t *testing.T) {
 	battery{
 		{"err", err, nil},
 		{"Ok()", post.Ok(), true},
-		{"Status()", post.Status(), http.StatusCreated},
+		{"Status", post.StatusCode, http.StatusCreated},
 		{"enterprise.name", result.Name, name0},
 	}.Run("post", t)
 	href := post.Location()
@@ -173,7 +173,7 @@ func TestCall(t *testing.T) {
 	battery{
 		{"err", err, nil},
 		{"Ok()", put.Ok(), true},
-		{"Status()", put.Status(), http.StatusOK},
+		{"Status", put.StatusCode, http.StatusOK},
 		{"enterprise.Name", result.Name, name1},
 	}.Run("put", t)
 
@@ -181,7 +181,7 @@ func TestCall(t *testing.T) {
 	battery{
 		{"err", err, nil},
 		{"Ok()", get.Ok(), true},
-		{"Status()", get.Status(), http.StatusOK},
+		{"Status", get.StatusCode, http.StatusOK},
 		{"enterprise.Name", result.Name, name1},
 	}.Run("get", t)
 
@@ -189,14 +189,14 @@ func TestCall(t *testing.T) {
 	battery{
 		{"err", err, nil},
 		{"Ok()", delete1.Ok(), true},
-		{"Status()", delete1.Status(), http.StatusNoContent},
+		{"Status", delete1.StatusCode, http.StatusNoContent},
 	}.Run("delete1", t)
 
 	delete2, err := core.Rest(nil, core.Delete(href))
 	battery{
 		{"err", err == nil, false},
 		{"Ok()", delete2.Ok(), false},
-		{"Status()", delete2.Status(), http.StatusNotFound},
+		{"Status", delete2.StatusCode, http.StatusNotFound},
 	}.Run("delete2", t)
 
 	values := url.Values{"idDatacenter": {"1"}}
@@ -204,7 +204,7 @@ func TestCall(t *testing.T) {
 	battery{
 		{"err", err, nil},
 		{"Ok()", query.Ok(), true},
-		{"Status()", query.Status(), http.StatusOK},
+		{"Status", query.StatusCode, http.StatusOK},
 		//		{"call.href", call.href, "https://testing:443/api/admin/rules?idDatacenter=1"},
 	}.Run("query", t)
 }

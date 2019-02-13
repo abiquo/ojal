@@ -1,8 +1,6 @@
 package core
 
 import (
-	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -15,13 +13,19 @@ type Reply struct {
 }
 
 func newReply(res *http.Response, payload []byte) (r *Reply, err error) {
-	if res != nil {
-		r = &Reply{Response: res, payload: payload}
-		r.result, err = ioutil.ReadAll(r.Body)
-		res.Body.Close()
-		if err == nil {
-			err = r.error()
-		}
+	if res == nil {
+		return
+	}
+
+	r = &Reply{Response: res, payload: payload}
+	r.result, err = ioutil.ReadAll(r.Body)
+	defer res.Body.Close()
+	if err != nil {
+		return
+	}
+
+	if !r.Ok() {
+		err = newError(res.StatusCode, r.result)
 	}
 	debug(r, err)
 	return
@@ -29,7 +33,10 @@ func newReply(res *http.Response, payload []byte) (r *Reply, err error) {
 
 // Ok returns if the reply was successful or not
 func (r *Reply) Ok() (ok bool) {
-	return r != nil && r.Response != nil && validCodes[r.Request.Method][r.StatusCode]
+	if r == nil {
+		return
+	}
+	return r.Response != nil && validCodes[r.Request.Method][r.StatusCode]
 }
 
 // Location returns an http.Response location values
@@ -42,19 +49,10 @@ func (r *Reply) Location() (location string) {
 	return
 }
 
-// Status returns the reply http reponse status string
-func (r *Reply) Status() (status int) {
-	if r != nil && r.Response != nil {
-		status = r.StatusCode
-	}
-	return
-}
-
-func (r *Reply) error() (err error) {
+// Error returns a failed reply error
+func (r *Reply) Error() (e Error) {
 	if !r.Ok() {
-		msg := fmt.Sprint(r.Status(), " Unexpected status code")
-		err = &Errors{status: r.StatusCode, msg: msg}
-		json.Unmarshal(r.result, err)
+		newError(r.StatusCode, r.result)
 	}
 	return
 }

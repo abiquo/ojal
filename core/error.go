@@ -1,34 +1,27 @@
 package core
 
 import (
-	"bytes"
+	"encoding/json"
 	"fmt"
 )
 
-// Error represents an Abiquo API Error
+// Error represents an Abiquo API error collection
 type Error struct {
-	Code    string `json:"code"`
-	Message string `json:"message"`
-	Links
+	Status     int
+	Collection []struct {
+		Code    string `json:"code"`
+		Message string `json:"message"`
+		// DTO
+	} `json:"collection"`
+	// DTO
 }
 
-// Errors represents an Abiquo API error collection
-type Errors struct {
-	status     int
-	msg        string
-	Collection []Error `json:"collection"`
-	Links
+func (e Error) Error() string {
+	return fmt.Sprint(e.Collection)
 }
 
-func (e *Error) Error() string {
-	return e.Code + " " + e.Message
-}
-
-func (e *Errors) Error() string {
-	message := new(bytes.Buffer)
-	fmt.Fprint(message, e.msg)
-	for _, err := range e.Collection {
-		fmt.Fprint(message, ": ", err.Error())
-	}
-	return string(message.Bytes())
+func newError(code int, body []byte) (e Error) {
+	e.Status = code
+	json.Unmarshal(body, &e)
+	return
 }
