@@ -53,7 +53,6 @@ func init() {
 		"ABQ_ENDPOINT":     os.Getenv("ABQ_ENDPOINT"),
 		"ABQ_USERNAME":     os.Getenv("ABQ_USERNAME"),
 		"ABQ_PASSWORD":     os.Getenv("ABQ_PASSWORD"),
-		"ABQ_VERSION":      os.Getenv("ABQ_VERSION"),
 		"ABQ_TOKEN":        os.Getenv("ABQ_TOKEN"),
 		"ABQ_TOKEN_SECRET": os.Getenv("ABQ_TOKEN_SECRET"),
 		"ABQ_API_SECRET":   os.Getenv("ABQ_API_SECRET"),
@@ -93,7 +92,6 @@ func TestInit(t *testing.T) {
 		{"err1", err1 == nil, false},
 		{"err2", err2 == nil, true},
 		{"err3", err3 == nil, true},
-		{"Version()", core.Version(), environment["ABQ_VERSION"]},
 	}.Run("Init", t)
 
 	ts := time.Now().Unix()

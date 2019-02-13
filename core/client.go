@@ -6,71 +6,30 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-
-	"github.com/dghubble/oauth1"
 )
+
+type requester interface {
+	do(*http.Request) (*http.Response, error)
+}
+
+// Authenticator ...
+type Authenticator interface {
+	newClient() requester
+}
 
 var (
-	client interface {
-		Do(*http.Request) (*http.Response, error)
-	}
+	client   requester
 	location *url.URL
-	version  string
 )
 
-// Basic contains the information for an Abiquo API basic auth client
-type Basic struct {
-	Username string
-	Password string
-}
-
-type basic struct {
-	Basic
-	*http.Client
-}
-
-func (b *basic) Do(request *http.Request) (*http.Response, error) {
-	request.SetBasicAuth(b.Username, b.Password)
-	return b.Client.Do(request)
-}
-
-// Oauth contains the information for an Abiquo API oauth client
-type Oauth struct {
-	Token       string
-	TokenSecret string
-	APIKey      string
-	APISecret   string
-}
-
-type oauth struct {
-	*http.Client
-}
-
-func (o *oauth) Do(request *http.Request) (*http.Response, error) {
-	return o.Client.Do(request)
-}
-
 // Init initializes Abiquo API client
-func Init(api string, auth interface{}) (err error) {
+func Init(api string, auth Authenticator) (err error) {
 	location, err = url.Parse(api + "/")
 	if err != nil {
 		return
 	}
 
-	switch t := auth.(type) {
-	case Basic:
-		client = &basic{t, &http.Client{}}
-	case Oauth:
-		config := oauth1.NewConfig(t.APIKey, url.QueryEscape(t.APISecret))
-		token := oauth1.NewToken(t.Token, url.QueryEscape(t.TokenSecret))
-		client = &oauth{config.Client(oauth1.NoContext, token)}
-	}
-
-	reply, err := Rest(nil, Get(Resolve("version", nil), "text/plain"))
-	if reply.Ok() {
-		version = strings.Join(strings.Split(string(reply.result), ".")[0:2], ".")
-	}
-
+	client = auth.newClient()
 	return
 }
 
@@ -97,9 +56,6 @@ func Resolve(href string, query url.Values) string {
 	return location.ResolveReference(u).String()
 }
 
-// Version returns the Abiquo API client version
-func Version() string { return version }
-
 // Do performs an Abiquo API call
 func do(c *Call) (r *Reply, err error) {
 	req, err := c.request()
@@ -107,7 +63,7 @@ func do(c *Call) (r *Reply, err error) {
 		return
 	}
 
-	res, err := client.Do(req)
+	res, err := client.do(req)
 	if err != nil {
 		return
 	}
@@ -125,8 +81,6 @@ func Rest(result interface{}, c *Call) (r *Reply, err error) {
 
 	if r.Ok() {
 		json.Unmarshal(r.result, result)
-	} else {
-		err = r.error()
 	}
 	return
 }

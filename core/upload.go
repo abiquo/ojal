@@ -45,7 +45,7 @@ func Upload(templates, path, info string) (r *Reply, err error) {
 	req.ParseMultipartForm(256 * 1024 * 1024)
 	req.Header.Set("Accept", "application/json, text/plain, */*")
 	req.Header.Set("Content-Type", writer.FormDataContentType())
-	res, err := client.Do(req)
+	res, err := client.do(req)
 	if err != nil {
 		return
 	}
