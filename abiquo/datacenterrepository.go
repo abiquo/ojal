@@ -59,7 +59,7 @@ func (d *DatacenterRepository) upload(file, info string) (*VirtualMachineTemplat
 	// Prevent the template from not being found inmediately after the upload
 	time.Sleep(5 * time.Second)
 
-	path := strings.Join(strings.Split(reply.Location(), "/")[7:], "/")
+	path := strings.Join(strings.Split(reply.URL(), "/")[7:], "/")
 	templates := d.Rel("virtualmachinetemplates").Collection(url.Values{"path": {path}})
 	resource := templates.First()
 	if resource == nil {

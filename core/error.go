@@ -11,13 +11,18 @@ type Error struct {
 	Collection []struct {
 		Code    string `json:"code"`
 		Message string `json:"message"`
-		// DTO
 	} `json:"collection"`
-	// DTO
 }
 
-func (e Error) Error() string {
-	return fmt.Sprint(e.Collection)
+func (e Error) Error() (str string) {
+	switch len(e.Collection) {
+	case 0:
+		return fmt.Sprintf("%v Unexpected status code", e.Status)
+	case 1:
+		return fmt.Sprintf("%v %v %v", e.Status, e.Collection[0].Code, e.Collection[0].Message)
+	default:
+		return fmt.Sprintf("%v Unexpected status code: %v", e.Status, e.Collection)
+	}
 }
 
 func newError(code int, body []byte) (e Error) {

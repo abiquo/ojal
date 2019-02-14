@@ -1,98 +1,62 @@
 package abiquo
 
 import (
-	"net/url"
-
 	"github.com/abiquo/ojal/core"
 )
 
 // Categories returns the platform categories collection
-func Categories(query url.Values) *core.Collection {
-	return core.NewLinker("config/categories", "categories").Collection(query)
-}
-
-// Create creates a new Category in the Abiquo API
-func (c *Category) Create() error {
-	return core.Create(core.NewLinker("config/categories", "category"), c)
+func Categories() *core.Link {
+	return core.NewLink("config/categories").SetType("categories")
 }
 
 // Datacenters returns the Abiquo API datacenters collection
-func Datacenters(query url.Values) *core.Collection {
-	return core.NewLinker("admin/datacenters", "datacenters").Collection(query)
+func Datacenters() *core.Link {
+	return core.NewLink("admin/datacenters").SetType("datacenters")
 }
 
 // DeviceTypes returns the API supported SDN device types collection
-func DeviceTypes(q url.Values) *core.Collection {
-	return core.NewLinker("config/devicetypes", "devicetypes").Collection(q)
+func DeviceTypes() *core.Link {
+	return core.NewLink("config/devicetypes").SetType("devicetypes")
 }
 
 // Enterprises returns a slice of enterprises
-func Enterprises(query url.Values) *core.Collection {
-	return core.NewLinker("admin/enterprises", "enterprises").Collection(query)
-}
-
-// Create creates the requested enterprise
-func (e *Enterprise) Create() error {
-	return core.Create(core.NewLinker("admin/enterprises", "enterprise"), e)
+func Enterprises() *core.Link {
+	return core.NewLink("admin/enterprises").SetType("enterprises")
 }
 
 // Licenses returns the collection of licenses in the platform
-func Licenses(query url.Values) *core.Collection {
-	return core.NewLinker("config/licenses", "licenses").Collection(query)
+func Licenses() *core.Link {
+	return core.NewLink("config/licenses").SetType("licenses")
 }
 
 // Login returns the User resource for the client credentials
 func Login() (user *User, err error) {
-	resource, err := core.NewLinker("login", "user").Walk()
-	if err != nil {
-		return
-	}
-	user = resource.(*User)
+	user = new(User)
+	err = core.NewLink("login").SetType("user").Read(user)
 	return
 }
 
 // Privileges retuns the API privileges collection
-func Privileges(query url.Values) *core.Collection {
-	return core.NewLinker("config/privileges", "privileges").Collection(query)
+func Privileges() *core.Link {
+	return core.NewLink("config/privileges").SetType("privileges")
 }
 
 // RemoteServices returns the Remote Services collection in the platform
-func RemoteServices(query url.Values) *core.Collection {
-	return core.NewLinker("admin/remoteservices", "remoteservices").Collection(query)
+func RemoteServices() *core.Link {
+	return core.NewLink("admin/remoteservices").SetType("remoteservices")
 }
 
 // Roles returns the roles collection in the platform
-func Roles(query url.Values) *core.Collection {
-	return core.NewLinker("admin/roles", "roles").Collection(query)
-}
-
-// Create posts the *Role r to the Abiquo API roles endpoint
-func (r *Role) Create() error {
-	return core.Create(core.NewLinker("admin/roles", "role"), r)
-}
-
-// AddPrivilege adds the *Privilege rel privilege link to the *Role
-func (r *Role) AddPrivilege(p *Privilege) {
-	r.Add(p.Rel("privilege"))
-}
-
-// Create posts the *Scope s to the scopes endpoint
-func (s *Scope) Create() error {
-	return core.Create(core.NewLinker("admin/scopes", "scope"), s)
+func Roles() *core.Link {
+	return core.NewLink("admin/roles").SetType("roles")
 }
 
 // Scopes returns the API scopes collection
-func Scopes(query url.Values) *core.Collection {
-	return core.NewLinker("admin/scopes", "scopes").Collection(query)
+func Scopes() *core.Link {
+	return core.NewLink("admin/scopes").SetType("scopes")
 }
 
 // VirtualDatacenters returns the Abiquo virtual datacenters collection
-func VirtualDatacenters(query url.Values) *core.Collection {
-	return core.NewLinker("cloud/virtualdatacenters", "virtualdatacenters").Collection(query)
-}
-
-// Create creates a new VDC
-func (v *VirtualDatacenter) Create() error {
-	endpoint := core.NewLinker("cloud/virtualdatacenters", "virtualdatacenter")
-	return core.Create(endpoint, v)
+func VirtualDatacenters() *core.Link {
+	return core.NewLink("cloud/virtualdatacenters").SetType("virtualdatacenters")
 }

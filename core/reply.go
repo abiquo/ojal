@@ -39,8 +39,8 @@ func (r *Reply) Ok() (ok bool) {
 	return r.Response != nil && validCodes[r.Request.Method][r.StatusCode]
 }
 
-// Location returns an http.Response location values
-func (r *Reply) Location() (location string) {
+// URL returns an http.Response location values
+func (r *Reply) URL() (location string) {
 	if r != nil {
 		if href, err := r.Response.Location(); err == nil {
 			location = href.String()
@@ -55,4 +55,14 @@ func (r *Reply) Error() (e Error) {
 		newError(r.StatusCode, r.result)
 	}
 	return
+}
+
+// Media ...
+func (r *Reply) Media() string {
+	content, ok := r.Header["Content-Type"]
+	if !ok {
+		panic("no content type header")
+	}
+
+	return content[0]
 }

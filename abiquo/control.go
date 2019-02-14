@@ -35,37 +35,12 @@ type ScalingGroupRule struct {
 
 // StartMaintenance enables the *ScalingGroup maintenance mode
 func (s *ScalingGroup) StartMaintenance() (err error) {
-	_, err = core.Rest(nil, core.Post(
-		s.Rel("startmaintenance").Href,
-		"application/json, text/plain, */*",
-		"application/json",
-		nil,
-	))
+	_, err = core.Rest(nil, core.Post(s.Rel("startmaintenance"), nil, nil, nil))
 	return
 }
 
 // EndMaintenance disables the *ScalingGroup maintenance mode
 func (s *ScalingGroup) EndMaintenance() (err error) {
-	_, err = core.Rest(nil, core.Post(
-		s.Rel("endmaintenance").Href,
-		"application/json, text/plain, */*",
-		"application/json",
-		nil,
-	))
-	return
-}
-
-// VirtualAppliance represents an Abiquo virtual appliance DTO
-type VirtualAppliance struct {
-	Name string `json:"name"`
-	core.DTO
-}
-
-// CreateVM creates a new VM in the Vapp
-func (v *VirtualAppliance) CreateVM(vmt string, dto *VirtualMachine) (vm *VirtualMachine, err error) {
-	vm = &VirtualMachine{}
-	*vm = *dto
-	vm.AddTypeRel(vmt, "virtualmachinetemplate")
-	err = core.Create(v.Rel("virtualmachines").SetType("virtualmachine"), vm)
+	_, err = core.Rest(nil, core.Post(s.Rel("endmaintenance"), nil, nil, nil))
 	return
 }

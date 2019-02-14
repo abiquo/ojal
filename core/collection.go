@@ -28,10 +28,10 @@ func (c *Collection) Item() Resource { return c.item() }
 func (c *Collection) Size() int { return c.size() }
 
 // NewCollection returns a collection of the specified *Link.Type
-func NewCollection(link *Link, query url.Values) (collection *Collection) {
+func newCollection(link *Link, query url.Values) (collection *Collection) {
 	next := link
 	page := new(page)
-	media := collections[link.Type]
+	media := collections[link.Media()]
 	factory := func(raw json.RawMessage) (resource Resource) {
 		resource = Factory(media)
 		json.Unmarshal(raw, resource)
@@ -46,7 +46,7 @@ func NewCollection(link *Link, query url.Values) (collection *Collection) {
 		},
 		next: func() bool {
 			if len(page.Collection) == 0 && next != nil {
-				Rest(page, Get(next.Href, link.Type).Query(query))
+				Rest(page, Get(next, link).Query(query))
 				next = page.Rel("next")
 			}
 			return len(page.Collection) > 0
@@ -68,7 +68,7 @@ func (c *Collection) List() (resources Resources) {
 }
 
 // Find a resource in a collection
-func (c *Collection) Find(t Test) Resource {
+func (c *Collection) Find(t func(r Resource) bool) Resource {
 	for c.Next() {
 		if resource := c.Item(); t(resource) {
 			return resource

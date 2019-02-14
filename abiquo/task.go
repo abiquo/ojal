@@ -24,22 +24,32 @@ func NewTask(call *core.Call) (err error) {
 	}
 
 	endpoint := reply.Rel("status").SetType("taskextended")
-	if result := taskWait(endpoint); result != "FINISHED_SUCCESSFULLY" {
+	result, err := taskWait(endpoint)
+	if err != nil {
+		return
+	}
+
+	if result != "FINISHED_SUCCESSFULLY" {
 		err = fmt.Errorf("task: %v %v", endpoint.Href, result)
 	}
 	return
 }
 
-func taskWait(endpoint *core.Link) string {
+func taskWait(endpoint *core.Link) (state string, err error) {
 	task := new(Task)
 	for {
 		time.Sleep(10000 * time.Millisecond)
-		core.Read(endpoint, task)
-		switch task.State {
+		err = endpoint.Read(task)
+		if err != nil {
+			return
+		}
+
+		state = task.State
+		switch state {
 		case "FINISHED_SUCCESSFULLY":
-			return task.State
+			return
 		case "FINISHED_UNSUCCESSFULLY", "ABORTED", "CANCELLED", "ACK_ERROR":
-			return task.State
+			return
 		}
 	}
 }

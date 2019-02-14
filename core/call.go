@@ -10,45 +10,43 @@ import (
 // Call represents a generic API call
 type Call struct {
 	method  string
-	href    string
+	href    Href
 	query   url.Values
-	accept  string
-	content string
+	accept  Type
+	content Type
 	payload []byte
 }
 
+func newCall(method string, href Href, accept, content Type, payload []byte) *Call {
+	return &Call{
+		method:  method,
+		href:    href,
+		accept:  accept,
+		content: content,
+		payload: payload,
+	}
+}
+
 // Delete returns a new DELETE call
-func Delete(href string) *Call {
-	return &Call{method: "DELETE", href: href}
+func Delete(href Href) *Call {
+	return newCall("DELETE", href, nil, nil, nil)
 }
 
 // Get returns a new GET call
-func Get(href, media string) *Call {
-	return &Call{method: "GET", href: href, accept: media}
+func Get(href Href, media Type) *Call {
+	return newCall("GET", href, media, nil, nil)
 }
 
 // Put returns a new PUT call
-func Put(href, accept, content string, payload interface{}) *Call {
+func Put(href Href, accept, content Type, payload interface{}) *Call {
 	data, _ := json.Marshal(payload)
-	return &Call{
-		method:  "PUT",
-		href:    href,
-		accept:  accept,
-		content: content,
-		payload: data,
-	}
+	return newCall("PUT", href, accept, content, data)
 }
 
 // Post returns a new POST call
-func Post(href, accept, content string, payload interface{}) *Call {
+func Post(href Href, accept, content Type, payload interface{}) *Call {
 	data, _ := json.Marshal(payload)
-	return &Call{
-		method:  "POST",
-		href:    href,
-		accept:  accept,
-		content: content,
-		payload: data,
-	}
+	return newCall("POST", href, accept, content, data)
 }
 
 // Query sets an Abiquo API call query values
@@ -59,14 +57,18 @@ func (c *Call) Query(query url.Values) *Call {
 
 func (c *Call) request() (req *http.Request, err error) {
 	reader := bytes.NewReader(c.payload)
-	location := Resolve(c.href, c.query)
-	if req, err = http.NewRequest(c.method, location, reader); err == nil {
-		if c.accept != "" {
-			req.Header.Set("Accept", Media(c.accept))
-		}
-		if c.content != "" {
-			req.Header.Set("Content-Type", Media(c.content))
-		}
+	location := Resolve(c.href.URL(), c.query)
+	req, err = http.NewRequest(c.method, location, reader)
+	if err != nil {
+		return
 	}
+
+	if c.accept != nil {
+		req.Header.Set("Accept", c.accept.Media())
+	}
+	if c.content != nil {
+		req.Header.Set("Content-Type", c.content.Media())
+	}
+
 	return
 }

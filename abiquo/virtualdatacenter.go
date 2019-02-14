@@ -4,6 +4,35 @@ import (
 	"github.com/abiquo/ojal/core"
 )
 
+// Disk is the shared volume/harddisk interface
+type Disk interface {
+	core.Endpoint
+	Link() *core.Link
+	Controller() string
+	ControllerType() string
+}
+
+// HardDisk represents an hard disk resource
+type HardDisk struct {
+	ID                 int    `json:"id,omitempty"`
+	Label              string `json:"label,omitempty"`
+	Bootable           bool   `json:"bootable,omitempty"`
+	DiskController     string `json:"diskController,omitempty"`
+	DiskControllerType string `json:"diskControllerType,omitempty"`
+	Sequence           int    `json:"sequence,omitempty"`
+	DiskFormatType     string `json:"diskFormatType,omitempty"`
+	DiskFileSize       int    `json:"diskFileSize,omitempty"`
+	SizeInMb           int    `json:"sizeInMb,omitempty"`
+	UUID               string `json:"uuid,omitempty"`
+	core.DTO
+}
+
+// Controller ...
+func (h *HardDisk) Controller() string { return h.DiskController }
+
+// ControllerType ...
+func (h *HardDisk) ControllerType() string { return h.DiskControllerType }
+
 // Firewall defines a firewall policy resource
 type Firewall struct {
 	ID          int    `json:"id,omitempty"`
@@ -41,11 +70,10 @@ type LoadBalancer struct {
 
 // VMs returns a load balancer node list
 func (l *LoadBalancer) VMs() (vms core.Links, err error) {
-	resource, err := l.Walk("virtualmachines")
+	err = l.Rel("virtualmachines").Read(vms)
 	if err != nil {
 		return
 	}
-	vms = resource.(*core.DTO).Links
 	return
 }
 
@@ -104,6 +132,23 @@ type LoadBalancerRules struct {
 	Collection []LoadBalancerRule `json:"collection"`
 }
 
+// Tier represents a tier resource
+type Tier struct {
+	ID                      int    `json:"id,omitempty"`
+	Name                    string `json:"name"`
+	Description             string `json:"description"`
+	Enabled                 bool   `json:"enabled"`
+	DefaultAllowed          bool   `json:"defaultAllowed"`
+	StorageAllocationPolicy string `json:"storageAllocationPolicy"`
+	core.DTO
+}
+
+// VirtualAppliance represents an Abiquo virtual appliance DTO
+type VirtualAppliance struct {
+	Name string `json:"name"`
+	core.DTO
+}
+
 // VirtualDatacenter represents an Abiquo API Virtual datacenter DTO
 //
 // Collections:
@@ -127,26 +172,41 @@ type VirtualDatacenter struct {
 	core.DTO
 }
 
-// CreateHardDisk ...
-func (v *VirtualDatacenter) CreateHardDisk(dto *HardDisk) (hardDisk *HardDisk, err error) {
-	hardDisk = &HardDisk{}
-	*hardDisk = *dto
-	err = core.Create(v.Rel("disks").SetType("harddisk"), hardDisk)
-	return
-}
-
-// CreateVolume ...
-func (v *VirtualDatacenter) CreateVolume(dto *Volume) (volume *Volume, err error) {
-	volume = &Volume{}
-	*volume = *dto
-	err = core.Create(v.Rel("volumes").SetType("volume"), volume)
-	return
-}
-
 // PrivateNetworks ...
 func (v *VirtualDatacenter) PrivateNetworks() (networks []*Network) {
 	collectionToList(v, "privatenetworks", func(r core.Resource) {
 		networks = append(networks, r.(*Network))
 	})
+	return
+}
+
+// Volume represents a volume resource
+type Volume struct {
+	ID                 int    `json:"id,omitempty"`
+	AllowResize        bool   `json:"allowResize"`
+	SizeInMB           int    `json:"sizeInMB,omitempty"`
+	State              string `json:"state,omitempty"`
+	Name               string `json:"name,omitempty"`
+	Bootable           bool   `json:"bootable,omitempty"`
+	Description        string `json:"description,omitempty"`
+	DiskControllerType string `json:"diskControllerType,omitempty"`
+	DiskController     string `json:"diskController,omitempty"`
+	core.DTO
+}
+
+// Controller ...
+func (v *Volume) Controller() string { return v.DiskController }
+
+// ControllerType ...
+func (v *Volume) ControllerType() string { return v.DiskControllerType }
+
+// Update ...
+func (v *Volume) Update() (err error) {
+	_, err = core.Rest(nil, core.Put(
+		v,
+		acceptedRequest,
+		v,
+		v,
+	))
 	return
 }

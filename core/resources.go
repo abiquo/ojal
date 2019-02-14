@@ -1,22 +1,10 @@
 package core
 
-// Resource is an abstract interface for DTO objects
-type Resource interface {
-	Endpoint
-	Link() *Link
-	Rel(string) *Link
-	Add(*Link)
-	Walk(string) (Resource, error)
-}
-
-// Test validates if a resource fulfills a condition
-type Test func(r Resource) bool
-
 // Resources represents an Abiquo API collection elements
 type Resources []Resource
 
 // Find a resource in a collection
-func (r Resources) Find(t Test) Resource {
+func (r Resources) Find(t func(r Resource) bool) Resource {
 	for _, resource := range r {
 		if t(resource) {
 			return resource
@@ -26,7 +14,7 @@ func (r Resources) Find(t Test) Resource {
 }
 
 // Filter returns the elements which fullfill the Test
-func (r Resources) Filter(t Test) (resources Resources) {
+func (r Resources) Filter(t func(r Resource) bool) (resources Resources) {
 	for _, resource := range r {
 		if t(resource) {
 			resources = append(resources, resource)

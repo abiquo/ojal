@@ -8,23 +8,21 @@ import (
 
 // Link represents an Abiquo link
 type Link struct {
-	Href  string `json:"href"`
+	Href  string `json:"href,omitempty"`
 	Rel   string `json:"rel,omitempty"`
 	Title string `json:"title,omitempty"`
 	Type  string `json:"type,omitempty"`
 
+	// Disk specific attributes
+	Length             int    `json:"length,omitempty"`
 	DiskControllerType string `json:"diskControllerType,omitempty"`
 	DiskController     string `json:"diskController,omitempty"`
+	DiskLabel          string `json:"diskLabel,omitempty"`
 }
 
 // NewLink returns a new link to the href URL
 func NewLink(href string) *Link {
 	return &Link{Href: Resolve(href, nil)}
-}
-
-// NewLinkType returns a new link of the specified type
-func NewLinkType(href, media string) *Link {
-	return NewLink(href).SetType(media)
 }
 
 func (l *Link) copy() (link *Link) {
@@ -54,7 +52,7 @@ func (l *Link) Media() (media string) {
 // IsMedia returns whether the link is of media Type
 func (l *Link) IsMedia(media string) bool {
 	if l != nil {
-		return strings.HasPrefix(l.Type, Media(media))
+		return strings.HasPrefix(l.Type, getMedia(media))
 	}
 	return false
 }
@@ -62,7 +60,7 @@ func (l *Link) IsMedia(media string) bool {
 // SetType retuns a link clone with the specified type value
 func (l *Link) SetType(media string) (link *Link) {
 	if link = l.copy(); link != nil {
-		link.Type = Media(media)
+		link.Type = getMedia(media)
 	}
 	return
 }
@@ -85,7 +83,7 @@ func (l *Link) SetTitle(title string) (link *Link) {
 
 // Collection returns a collection from the link
 func (l *Link) Collection(query url.Values) *Collection {
-	return NewCollection(l, query)
+	return newCollection(l, query)
 }
 
 // Walk returns the resource the link is pointing to
@@ -94,27 +92,38 @@ func (l *Link) Walk() (resource Resource, err error) {
 		return nil, errors.New("Walk: link is nil")
 	}
 
-	r := resources[l.Type]()
-	err = Read(l, r)
-	if err != nil {
-		return
-	}
+	resource = resources[l.Type]()
+	err = l.Read(resource)
+	return
 
-	resource = r
+}
+
+// Read ...
+func (l *Link) Read(result interface{}) (err error) {
+	_, err = Rest(result, Get(l, l))
 	return
 }
 
-// Exists returns whether a link is a valid resource in the API
-func (l *Link) Exists() (exists bool, err error) {
-	if l != nil {
-		var resource interface{}
-		err = Read(l, resource)
-		exists = err == nil
-	}
+// Create ...
+func (l *Link) Create(result interface{}) (err error) {
+	_, err = Rest(result, Post(l, l, l, result))
 	return
 }
 
-// ToHref ...
-func (l *Link) ToHref() string {
-	return l.URL()
+// Update ...
+func (l *Link) Update(result interface{}) (err error) {
+	_, err = Rest(result, Put(l, l, l, result))
+	return
+}
+
+// Remove ...
+func (l *Link) Remove() (err error) {
+	_, err = Rest(nil, Delete(l))
+	return
+}
+
+// Exists ...
+func (l *Link) Exists() (bool, error) {
+	err := l.Read(nil)
+	return err == nil, err
 }

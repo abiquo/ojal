@@ -2,10 +2,8 @@ package core
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
-	"strings"
 )
 
 type requester interface {
@@ -31,16 +29,6 @@ func Init(api string, auth Authenticator) (err error) {
 
 	client = auth.newClient()
 	return
-}
-
-const mediaFmt = "application/vnd.abiquo.%v+json"
-
-// Media returns the equivalent media type for a media shortcut
-func Media(media string) string {
-	if media != "" && !strings.ContainsAny(media, "/") {
-		media = fmt.Sprintf(mediaFmt, media)
-	}
-	return media
 }
 
 // Resolve resolves a rawurl location iwithin the api endpoint

@@ -8,42 +8,27 @@ import (
 	"testing"
 	"time"
 
+	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 )
 
-type battery []*struct {
-	Message  string
-	Current  interface{}
-	Expected interface{}
-}
-
-func (b battery) Run(name string, t *testing.T) {
-	for _, v := range b {
-		if v.Current != v.Expected {
-			t.Errorf("%v %v ? %v != %v", name, v.Message, v.Current, v.Expected)
-		}
+func verify(t *testing.T, name string, expected, current interface{}) {
+	if current != expected {
+		t.Errorf("%v FAIL %v != %v", name, expected, current)
 	}
 }
 
-type dto struct {
-	Name string `json:"name"`
-	core.DTO
-}
-
 var (
+	ts          = time.Now().Unix()
 	basic       core.Basic
 	oauth       core.Oauth
 	environment map[string]string
+	enterprise0 = &abiquo.Enterprise{Name: fmt.Sprint("ztest A ", ts)}
+	enterprise1 = &abiquo.Enterprise{Name: fmt.Sprint("ztest B ", ts)}
+	result      = &abiquo.Enterprise{}
 	none        *core.Link
 	self        *core.Link
 	edit        *core.Link
-	enterprise  core.Linker
-	enterprises core.Linker
-	name0       string
-	name1       string
-	enterprise0 *dto
-	enterprise1 *dto
-	result      *dto
 )
 
 func init() {
@@ -77,172 +62,108 @@ func init() {
 		TokenSecret: environment["ABQ_TOKEN_SECRET"],
 		Token:       environment["ABQ_TOKEN"],
 	}
-}
 
-func newDTO() core.Resource { return new(dto) }
+	core.RegisterMedia("enterprise", "enterprises", func() core.Resource { return new(abiquo.Enterprise) })
+	core.RegisterMedia("user", "users", func() core.Resource { return new(abiquo.User) })
+	core.Init(environment["ABQ_ENDPOINT"], basic)
 
-func TestInit(t *testing.T) {
-	err0 := core.Init("https://fail:443/api", core.Basic{})
-	err1 := core.Init(environment["ABQ_ENDPOINT"], core.Basic{})
-	err2 := core.Init(environment["ABQ_ENDPOINT"], oauth)
-	err3 := core.Init(environment["ABQ_ENDPOINT"], basic)
-
-	battery{
-		{"err0", err0 == nil, false},
-		{"err1", err1 == nil, false},
-		{"err2", err2 == nil, true},
-		{"err3", err3 == nil, true},
-	}.Run("Init", t)
-
-	ts := time.Now().Unix()
-	name0 = fmt.Sprint("ztest A ", ts)
-	name1 = fmt.Sprint("ztest B ", ts)
-	none = core.NewLinkType("none", "none").SetRel("none").SetTitle("none")
-	self = core.NewLinkType("self", "self").SetRel("self").SetTitle("self")
-	edit = core.NewLinkType("edit", "edit").SetRel("edit").SetTitle("edit")
-	enterprise = core.NewLinker("admin/enterprises", "enterprise")
-	enterprises = core.NewLinker("admin/enterprises", "enterprises")
-	enterprise0 = &dto{Name: name0}
-	enterprise1 = &dto{Name: name1}
-	result = &dto{}
-	core.RegisterMedia("enterprise", "enterprises", newDTO)
-	core.RegisterMedia("user", "users", newDTO)
+	none = core.NewLink("none").SetType("none").SetRel("none").SetTitle("none")
+	self = core.NewLink("self").SetType("self").SetRel("self").SetTitle("self")
+	edit = core.NewLink("edit").SetType("edit").SetRel("edit").SetTitle("edit")
 }
 
 func TestLink(t *testing.T) {
-	battery{
-		{"URL()", none.URL(), core.Resolve("none", nil)},
-		{"Media()", none.Media(), core.Media("none")},
-		{"Title", none.Title, "none"},
-		{"Rel", none.Rel, "none"},
-	}.Run("link", t)
+	verify(t, "link.URL()", none.URL(), core.Resolve("none", nil))
+	verify(t, "link.Media()", none.Media(), core.Media("none").Media())
+	verify(t, "link.Title", none.Title, "none")
+	verify(t, "link.Rel", none.Rel, "none")
 }
 
 func TestObject(t *testing.T) {
 	object := make(core.Object)
-
-	battery{
-		{"Href()", object.Href(), ""},
-		{"Media()", object.Media(), core.Media("")},
-		{"len(Links())", len(object.Links()), 0},
-	}.Run("zero", t)
+	verify(t, "zero.Href()", object.Href(), "")
+	verify(t, "zero.Media()", object.Media(), core.Media("").Media())
 
 	object.Add(none)
-	battery{
-		{"Href()", object.Href(), ""},
-		{"Media()", object.Media(), core.Media("")},
-		{"len(Links())", len(object.Links()), 1},
-	}.Run("zero", t)
+	verify(t, "none.Href()", object.Href(), "")
+	verify(t, "none.Media()", object.Media(), core.Media("").Media())
 
 	object.Add(self)
-	battery{
-		{"Href()", object.Href(), self.Href},
-		{"Media()", object.Media(), self.Media()},
-		{"len(Links())", len(object.Links()), 2},
-	}.Run("self", t)
+	verify(t, "self.Href()", object.Href(), self.Href)
+	verify(t, "self.Media()", object.Media(), self.Media())
 
 	object.Add(edit)
-	battery{
-		{"Href()", object.Href(), edit.Href},
-		{"Media()", object.Media(), edit.Media()},
-		{"len(Links())", len(object.Links()), 3},
-	}.Run("edit", t)
+	verify(t, "edit.Href()", object.Href(), edit.Href)
+	verify(t, "edit.Media()", object.Media(), edit.Media())
 }
 
 func TestCall(t *testing.T) {
 	post, err := core.Rest(result, core.Post(
-		"admin/enterprises",
-		"enterprise",
-		"enterprise",
+		core.NewLink("admin/enterprises"),
+		core.Media("enterprise"),
+		core.Media("enterprise"),
 		enterprise0,
 	))
-	battery{
-		{"err", err, nil},
-		{"Ok()", post.Ok(), true},
-		{"Status", post.StatusCode, http.StatusCreated},
-		{"enterprise.name", result.Name, name0},
-	}.Run("post", t)
-	href := post.Location()
+	verify(t, "post.err", err, nil)
+	verify(t, "post.Ok()", post.Ok(), true)
+	verify(t, "post.Status", post.StatusCode, http.StatusCreated)
+	verify(t, "enterprise.name", result.Name, enterprise0.Name)
 
-	put, err := core.Rest(result, core.Put(
-		href,
-		"enterprise",
-		"enterprise",
-		enterprise1,
-	))
-	battery{
-		{"err", err, nil},
-		{"Ok()", put.Ok(), true},
-		{"Status", put.StatusCode, http.StatusOK},
-		{"enterprise.Name", result.Name, name1},
-	}.Run("put", t)
+	put, err := core.Rest(result, core.Put(post, post, post, enterprise1))
+	verify(t, "put.err", err, nil)
+	verify(t, "put.Ok()", put.Ok(), true)
+	verify(t, "put.Status", put.StatusCode, http.StatusOK)
+	verify(t, "result.Name", result.Name, enterprise1.Name)
 
-	get, err := core.Rest(result, core.Get(href, "enterprise"))
-	battery{
-		{"err", err, nil},
-		{"Ok()", get.Ok(), true},
-		{"Status", get.StatusCode, http.StatusOK},
-		{"enterprise.Name", result.Name, name1},
-	}.Run("get", t)
+	get, err := core.Rest(result, core.Get(post, post))
+	verify(t, "get.err", err, nil)
+	verify(t, "get.Ok()", get.Ok(), true)
+	verify(t, "get.Status", get.StatusCode, http.StatusOK)
+	verify(t, "get.enterprise.Name", result.Name, enterprise1.Name)
 
-	delete1, err := core.Rest(nil, core.Delete(href))
-	battery{
-		{"err", err, nil},
-		{"Ok()", delete1.Ok(), true},
-		{"Status", delete1.StatusCode, http.StatusNoContent},
-	}.Run("delete1", t)
+	delete1, err := core.Rest(nil, core.Delete(post))
+	verify(t, "delete1.err", err, nil)
+	verify(t, "delete1.Ok()", delete1.Ok(), true)
+	verify(t, "delete1.Status", delete1.StatusCode, http.StatusNoContent)
 
-	delete2, err := core.Rest(nil, core.Delete(href))
-	battery{
-		{"err", err == nil, false},
-		{"Ok()", delete2.Ok(), false},
-		{"Status", delete2.StatusCode, http.StatusNotFound},
-	}.Run("delete2", t)
+	delete2, err := core.Rest(nil, core.Delete(post))
+	verify(t, "delete2.err", err == nil, false)
+	verify(t, "delete2.Ok()", delete2.Ok(), false)
+	verify(t, "delete2.Status", delete2.StatusCode, http.StatusNotFound)
 
-	values := url.Values{"idDatacenter": {"1"}}
-	query, err := core.Rest(nil, core.Get("admin/rules", "rules").Query(values))
-	battery{
-		{"err", err, nil},
-		{"Ok()", query.Ok(), true},
-		{"Status", query.StatusCode, http.StatusOK},
-		//		{"call.href", call.href, "https://testing:443/api/admin/rules?idDatacenter=1"},
-	}.Run("query", t)
+	q := url.Values{"idDatacenter": {"1"}}
+	rules := core.NewLink("admin/rules").SetType("rules")
+	query, err := core.Rest(nil, core.Get(rules, rules).Query(q))
+	verify(t, "query.err", err, nil)
+	verify(t, "query.Ok()", query.Ok(), true)
+	verify(t, "query.Status", query.StatusCode, http.StatusOK)
 }
 
 func TestDTO(t *testing.T) {
 	dto := core.NewDTO(none)
-	battery{
-		{"Href()", dto.URL(), ""},
-		{"Type()", dto.Media(), core.Media("")},
-	}.Run("none", t)
+	verify(t, "none.Href()", dto.URL(), "")
+	verify(t, "none.Type()", dto.Media(), "")
 
 	dto.Add(self)
-	battery{
-		{"Href()", dto.URL(), self.URL()},
-		{"Type()", dto.Media(), self.Media()},
-	}.Run("self", t)
+	verify(t, "self.Href()", dto.URL(), self.URL())
+	verify(t, "self.Type()", dto.Media(), self.Media())
 
 	dto.Add(edit)
-	battery{
-		{"Href()", dto.URL(), edit.URL()},
-		{"Type()", dto.Media(), edit.Media()},
-	}.Run("edit", t)
-}
-
-func resolve(path string) string {
-	return environment["ABQ_ENDPOINT"] + "/" + path
+	verify(t, "edit.Href()", dto.URL(), edit.URL())
+	verify(t, "edit.Type()", dto.Media(), edit.Media())
 }
 
 func TestResolve(t *testing.T) {
 	null := core.Resolve("", nil)
 	path := core.Resolve("admin/rules", nil)
 	query := core.Resolve("admin/rules", url.Values{"idDatacenter": {"1"}})
+	resolve := func(path string) string {
+		return environment["ABQ_ENDPOINT"] + "/" + path
+	}
 
-	battery{
-		{"null", null, resolve("")},
-		{"path", path, resolve("admin/rules")},
-		{"query", query, resolve("admin/rules?idDatacenter=1")},
-	}.Run("resolve", t)
+	verify(t, "resolve.null", null, resolve(""))
+	verify(t, "resolve.path", path, resolve("admin/rules"))
+	verify(t, "resolve.query", query, resolve("admin/rules?idDatacenter=1"))
 }
 
 func ExampleMedia() {
@@ -257,21 +178,18 @@ func ExampleMedia() {
 }
 
 func TestCollection(t *testing.T) {
-	collection := enterprises.Collection(nil)
+	collection := abiquo.Enterprises().Collection(nil)
 	count := 0
 	for collection.Next() {
 		collection.Item()
 		count++
 	}
-
-	battery{
-		{"Size()", count, collection.Size()},
-	}.Run("collection", t)
+	verify(t, "collection.Size()", count, collection.Size())
 }
 
 func ExampleCollection_List() {
-	for _, e := range enterprises.Collection(nil).List() {
-		fmt.Println(e.(*dto).Name)
+	for _, e := range abiquo.Enterprises().Collection(nil).List() {
+		fmt.Println(e.Link().Title)
 		break
 	}
 
@@ -281,10 +199,9 @@ func ExampleCollection_List() {
 
 func ExampleCollection_Find() {
 	for _, name := range []string{"Abiquo", "abq"} {
-		finder := func(r core.Resource) bool {
-			return r.(*dto).Name == name
-		}
-		result := enterprises.Collection(nil).Find(finder)
+		result := abiquo.Enterprises().Collection(nil).Find(func(r core.Resource) bool {
+			return r.Link().Title == name
+		})
 		fmt.Println(result == nil)
 	}
 
@@ -294,21 +211,22 @@ func ExampleCollection_Find() {
 }
 
 func ExampleCollection_First() {
-	e := enterprises.Collection(nil).First()
-	fmt.Println(e.(*dto).Name)
+	e := abiquo.Enterprises().Collection(nil).First()
+	fmt.Println(e.(*abiquo.Enterprise).Name)
 
 	// Output:
 	// Abiquo
 }
 
-func ExampleRemove() {
+func ExampleDTO_Remove() {
 	var (
-		create1 = core.Create(enterprise, enterprise0)
-		create2 = core.Create(enterprise, enterprise0)
-		read    = core.Read(enterprise0, enterprise0)
-		update  = core.Update(enterprise0, enterprise0)
-		remove1 = core.Remove(enterprise0)
-		remove2 = core.Remove(enterprise0)
+		endpoint = abiquo.Enterprises().SetType("enterprise")
+		create1  = endpoint.Create(enterprise0)
+		create2  = endpoint.Create(enterprise0)
+		read     = enterprise0.Read(enterprise0)
+		update   = enterprise0.Update(enterprise0)
+		remove1  = enterprise0.Remove()
+		remove2  = enterprise0.Remove()
 	)
 	fmt.Println(create1)
 	fmt.Println(create2)
@@ -319,30 +237,28 @@ func ExampleRemove() {
 
 	// Output:
 	// <nil>
-	// 409 Unexpected status code: ENTERPRISE-4 Duplicate name for an enterprise
+	// [{ENTERPRISE-4 Duplicate name for an enterprise}]
 	// <nil>
 	// <nil>
 	// <nil>
-	// 404 Unexpected status code: EN-0 The requested enterprise does not exist
+	// [{EN-0 The requested enterprise does not exist}]
 }
 
 func TestWalk(t *testing.T) {
-	endpoint := core.NewLinker("admin/enterprises/1/users/1", "user")
+	endpoint := core.NewLink("admin/enterprises/1/users/1").SetType("user")
 	username, err1 := endpoint.Walk()
-	enterprise, err2 := username.Walk("enterprise")
+	verify(t, "walk.err1", err1, nil)
 
-	battery{
-		{"err1", err1, nil},
-		{"err2", err2, nil},
-		{"nil", enterprise == nil, false},
-		{"name", enterprise.(*dto).Name, "Abiquo"},
-	}.Run("walk", t)
+	enterprise, err2 := username.Rel("enterprise").Walk()
+	verify(t, "walk.err2", err2, nil)
+	verify(t, "walk.nil", enterprise == nil, false)
+	verify(t, "walk.Title", enterprise.Link().Title, "Abiquo")
 }
 
 func ExampleResources_Map() {
 	var count int
 	counter := func(r core.Resource) { count++ }
-	collection := enterprises.Collection(nil)
+	collection := abiquo.Enterprises().Collection(nil)
 	collection.List().Map(counter)
 	fmt.Println(collection.Size() == count)
 
@@ -351,10 +267,12 @@ func ExampleResources_Map() {
 }
 
 func ExampleResources_Filter() {
-	filter := func(r core.Resource) bool { return r.(*dto).Name == "Abiquo" }
-	collection := enterprises.Collection(nil).List().Filter(filter)
-	fmt.Println(collection[0].(*dto).Name)
-	fmt.Println(len(collection))
+	collection := abiquo.Enterprises().Collection(nil)
+	filtered := collection.List().Filter(func(r core.Resource) bool {
+		return r.(*abiquo.Enterprise).Name == "Abiquo"
+	})
+	fmt.Println(filtered[0].(*abiquo.Enterprise).Name)
+	fmt.Println(len(filtered))
 
 	// Output:
 	// Abiquo
@@ -363,12 +281,9 @@ func ExampleResources_Filter() {
 
 func TestUpload(t *testing.T) {
 	reply, err := core.Upload(environment["ABQ_TEMPLATES"], environment["ABQ_OVA"], "")
-
-	battery{
-		{"err", err, nil},
-		{"Ok()", reply.Ok(), true},
-		{"Location()", reply.Location() != "", true},
-	}.Run("ova", t)
+	verify(t, "ova.err", err, nil)
+	verify(t, "ova.Ok()", reply.Ok(), true)
+	verify(t, "ova.URL()", reply.URL() != "", true)
 
 	reply, err = core.Upload(environment["ABQ_TEMPLATES"], environment["ABQ_DISK"], `{
 		"categoryName" : "Others",
@@ -386,10 +301,7 @@ func TestUpload(t *testing.T) {
 		"requiredCpu"      : 1,
 		"requiredRamInMB"  : 1024
 	}`)
-
-	battery{
-		{"err", err, nil},
-		{"Ok()", reply.Ok(), true},
-		{"Location()", reply.Location() != "", true},
-	}.Run("disk", t)
+	verify(t, "disk.err", err, nil)
+	verify(t, "disk.Ok()", reply.Ok(), true)
+	verify(t, "disk.URL()", reply.URL() != "", true)
 }

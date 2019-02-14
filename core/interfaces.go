@@ -1,21 +1,25 @@
 package core
 
-import "net/url"
-
-// Endpoint represents and Abiquo APIcore.Resource (urls, links, objects or responses)
-type Endpoint interface {
+// Href is an string representing an Abiquo resource
+type Href interface {
 	URL() string
+}
+
+// Type ...
+type Type interface {
 	Media() string
 }
 
-// Linker represents links which can generate collections or being walked
-type Linker interface {
-	Endpoint
-	Walk() (Resource, error)
-	Collection(q url.Values) *Collection
+// Endpoint represents and Abiquo APIcore.Resource (urls, links, objects or responses)
+type Endpoint interface {
+	Href
+	Type
 }
 
-// NewLinker returns an abstract endpoint. Useful for Walk and Collection
-func NewLinker(h, m string) Linker {
-	return NewLinkType(h, m)
+// Resource is an abstract interface for DTO objects
+type Resource interface {
+	Endpoint
+	Link() *Link
+	Rel(string) *Link
+	Add(*Link)
 }

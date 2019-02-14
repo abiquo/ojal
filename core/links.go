@@ -10,11 +10,8 @@ func (l Links) Rel(rel string) (link *Link) {
 	})
 }
 
-// TestLink verifies if a link fullfils a condition
-type TestLink func(l *Link) bool
-
 // Filter returns the links that meet the condition
-func (l Links) Filter(t TestLink) (links Links) {
+func (l Links) Filter(t func(l *Link) bool) (links Links) {
 	for _, link := range l {
 		if t(link) {
 			links = append(links, link)
@@ -24,7 +21,7 @@ func (l Links) Filter(t TestLink) (links Links) {
 }
 
 // Find returns the links that meet the condition
-func (l Links) Find(t TestLink) (link *Link) {
+func (l Links) Find(t func(l *Link) bool) (link *Link) {
 	for _, link := range l {
 		if t(link) {
 			return link
@@ -49,56 +46,7 @@ func (l Links) Link() (link *Link) {
 }
 
 // URL returns a links collection href
-func (l Links) URL() (u string) {
-	if link := l.Link(); link != nil {
-		u = link.Href
-	}
-	return
-}
+func (l Links) URL() (u string) { return l.Link().URL() }
 
 // Media returns a links collection media
-func (l Links) Media() (m string) {
-	if link := l.Link(); link != nil {
-		m = link.Type
-	}
-	return
-}
-
-// DTO represents a list of links
-type DTO struct {
-	Links `json:"links,omitempty"`
-}
-
-// Exists checks whether the self/edit link on the DTO exists on the API
-func (d *DTO) Exists() (exists bool, err error) {
-	if d != nil {
-		exists, err = d.Link().Exists()
-	}
-	return
-}
-
-// Add adds the Link l as rel to the *DTO Links
-// If the link is nil, the *DTO Links do not change
-func (d *DTO) Add(l *Link) {
-	if l != nil {
-		d.Links = append(d.Links, l)
-	}
-}
-
-// AddTypeRel ...
-func (d *DTO) AddTypeRel(href, media string) {
-	d.Add(NewLinkType(href, media).SetRel(media))
-}
-
-// NewDTO returns a DTO Links
-func NewDTO(links ...*Link) (d DTO) {
-	for _, link := range links {
-		d.Add(link)
-	}
-	return
-}
-
-// Walk returns the DTO rel Resource
-func (d *DTO) Walk(rel string) (Resource, error) {
-	return d.Rel(rel).Walk()
-}
+func (l Links) Media() (m string) { return l.Link().Media() }

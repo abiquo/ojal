@@ -34,14 +34,14 @@ var (
 // RegisterMedia sets the Resource factory for the media collection
 func RegisterMedia(media, collection string, factory func() Resource) {
 	if len(collection) > 0 {
-		collections[Media(collection)] = Media(media)
+		collections[getMedia(collection)] = getMedia(media)
 	}
-	resources[Media(media)] = factory
+	resources[getMedia(media)] = factory
 }
 
 // Factory returns a resource of the specified media type
 func Factory(media string) Resource {
-	if factory := resources[Media(media)]; factory != nil {
+	if factory := resources[getMedia(media)]; factory != nil {
 		return factory()
 	}
 	panic(fmt.Errorf("unregistered media %q", media))

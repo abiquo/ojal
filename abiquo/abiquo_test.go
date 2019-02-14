@@ -2,7 +2,6 @@ package abiquo_test
 
 import (
 	"fmt"
-	"net/url"
 	"os"
 	"sort"
 	"time"
@@ -38,30 +37,12 @@ func init() {
 	}); err != nil {
 		panic(err)
 	}
-
-	if location = abiquo.Datacenters(nil).Find(func(r core.Resource) bool {
-		return r.Link().Title == "datacenter 1"
-	}); location == nil {
-		panic("location not found")
-	}
-
-	if datacenter = abiquo.PrivateLocations(nil).Find(func(r core.Resource) bool {
-		return r.Link().Title == "datacenter 1"
-	}); datacenter == nil {
-		panic("datacenter not found")
-	}
-
-	if enterprise = abiquo.Enterprises(nil).Find(func(r core.Resource) bool {
-		return r.Link().Title == "Abiquo"
-	}); enterprise == nil {
-		panic("enterprise not found")
-	}
 }
 
 // ExampleUser shows how to retrieve the users name from an enterprise
 func ExampleUser() {
 	users := []string{}
-	collection := core.NewLinker("admin/enterprises/1/users", "users").Collection(nil)
+	collection := core.NewLink("admin/enterprises/1/users").SetType("users").Collection(nil)
 	for collection.Next() {
 		users = append(users, collection.Item().(*abiquo.User).Name)
 	}
@@ -74,7 +55,7 @@ func ExampleUser() {
 
 // ExampleCategories shows how to list all the categories
 func ExampleCategories() {
-	category := abiquo.Categories(nil).Find(func(r core.Resource) bool {
+	category := abiquo.Categories().Collection(nil).Find(func(r core.Resource) bool {
 		return r.(*abiquo.Category).Name == "Others"
 	})
 	fmt.Println(category != nil)
@@ -91,8 +72,11 @@ func ExampleCategories() {
 // ExampleCategory shows how to create a category
 func ExampleCategory() {
 	category := &abiquo.Category{Name: name, Erasable: true}
-	fmt.Println(category.Create())
-	fmt.Println(core.Remove(category))
+	err0 := abiquo.Categories().SetType("category").Create(category)
+	err1 := category.Remove()
+
+	fmt.Println(err0)
+	fmt.Println(err1)
 
 	// Output:
 	// <nil>
@@ -101,7 +85,7 @@ func ExampleCategory() {
 
 func ExampleLogin() {
 	user, err1 := abiquo.Login()
-	enterprise, err2 := user.Walk("enterprise")
+	enterprise, err2 := user.Rel("enterprise").Walk()
 
 	fmt.Println(err1)
 	fmt.Println(err2)
@@ -120,16 +104,28 @@ func ExampleLogin() {
 }
 
 func ExampleNetwork() {
+	find := func(link *core.Link, find func(core.Resource) bool) core.Resource {
+		return link.Collection(nil).Find(find)
+	}
+
+	datacenter := find(abiquo.PrivateLocations(), func(r core.Resource) bool {
+		return r.Link().Title == "datacenter 1"
+	})
+
+	location := find(abiquo.Datacenters(), func(r core.Resource) bool {
+		return r.Link().Title == "datacenter 1"
+	})
+
 	enterprise := &abiquo.Enterprise{Name: name}
-	err0 := enterprise.Create()
+	err0 := abiquo.Enterprises().SetType("enterprise").Create(enterprise)
 
 	endpoint := enterprise.Rel("limits").SetType("limit")
-	err1 := core.Create(endpoint, &abiquo.Limit{
+	err1 := endpoint.Create(&abiquo.Limit{
 		DTO: core.NewDTO(
 			enterprise.Link().SetRel("enterprise"),
 			location.Link().SetRel("location"),
-		)},
-	)
+		),
+	})
 
 	vdc := &abiquo.VirtualDatacenter{
 		Name:   name,
@@ -146,22 +142,17 @@ func ExampleNetwork() {
 			enterprise.Link().SetRel("enterprise"),
 		),
 	}
-	err2 := vdc.Create()
-
-	endpoint = vdc.Network.Rel("ips").SetType("privateip")
-	err3 := core.Create(endpoint, &abiquo.IP{
+	err2 := abiquo.VirtualDatacenters().SetType("virtualdatacenter").Create(vdc)
+	err3 := vdc.Network.Rel("ips").SetType("privateip").Create(&abiquo.IP{
 		IP: "192.168.0.253",
 	})
-
-	err4 := core.Remove(vdc)
-	err5 := core.Remove(enterprise)
 
 	fmt.Println(err0)
 	fmt.Println(err1)
 	fmt.Println(err2)
 	fmt.Println(err3)
-	fmt.Println(err4)
-	fmt.Println(err5)
+	fmt.Println(vdc.Remove())
+	fmt.Println(enterprise.Remove())
 
 	// Output:
 	// <nil>
@@ -174,6 +165,18 @@ func ExampleNetwork() {
 
 // ExampleDatacenter shows the Datacenter functionality
 func ExampleDatacenter() {
+	find := func(link *core.Link, find func(core.Resource) bool) core.Resource {
+		return link.Collection(nil).Find(find)
+	}
+
+	enterprise := find(abiquo.Enterprises(), func(r core.Resource) bool {
+		return r.Link().Title == "Abiquo"
+	})
+
+	datacenter := find(abiquo.PrivateLocations(), func(r core.Resource) bool {
+		return r.Link().Title == "datacenter 1"
+	})
+
 	nst := datacenter.Rel("networkservicetypes").Collection(nil).Find(func(r core.Resource) bool {
 		return r.Link().Title == "Service Network"
 	})
@@ -191,8 +194,8 @@ func ExampleDatacenter() {
 	}
 
 	endpoint := datacenter.Rel("network").SetType("vlan")
-	err0 := core.Create(endpoint, external)
-	err1 := core.Remove(external)
+	err0 := endpoint.Create(external)
+	err1 := external.Remove()
 
 	fmt.Println(err0)
 	fmt.Println(err1)
@@ -203,50 +206,31 @@ func ExampleDatacenter() {
 }
 
 func ExampleVirtualMachine_Deploy() {
-	query := url.Values{"has": {"tests"}}
-
-	vdc := abiquo.VirtualDatacenters(query).First()
-	if vdc == nil {
-		return
+	find := func(link *core.Link) core.Resource {
+		return link.Collection(nil).Find(func(r core.Resource) bool {
+			return r.Link().Title == "tests"
+		})
 	}
 
-	template := vdc.Rel("templates").Collection(query).First()
-	if template == nil {
-		return
-	}
-
-	vapp := vdc.Rel("virtualappliances").Collection(query).First()
-	if vdc == nil {
-		return
-	}
+	vdc := find(abiquo.VirtualDatacenters())
+	template := find(vdc.Rel("templates"))
+	vapp := find(vdc.Rel("virtualappliances"))
 
 	vm := &abiquo.VirtualMachine{
-		DTO: core.NewDTO(template.Link().SetRel("virtualmachinetemplate")),
+		DTO: core.NewDTO(
+			template.Link().SetRel("virtualmachinetemplate"),
+		),
 	}
-
-	endpoint := vapp.Rel("virtualmachines").SetType("virtualmachine")
-	err0 := core.Create(endpoint, vm)
-	if err0 != nil {
-		return
-	}
-	fmt.Println(err0)
-
+	err0 := vapp.Rel("virtualmachines").SetType("virtualmachine").Create(vm)
 	err1 := vm.Deploy()
-	if err1 != nil {
-		return
-	}
-	fmt.Println(err1)
-
-	err2 := vm.Undeploy()
-	if err2 != nil {
-		return
-	}
-	fmt.Println(err2)
-
+	err2 := vm.Undeploy(&abiquo.VirtualMachineTask{
+		ForceUndeploy: true,
+	})
 	err3 := vm.Delete()
-	if err3 != nil {
-		return
-	}
+
+	fmt.Println(err0)
+	fmt.Println(err1)
+	fmt.Println(err2)
 	fmt.Println(err3)
 
 	// Output:
@@ -258,7 +242,7 @@ func ExampleVirtualMachine_Deploy() {
 
 // ExampleEnterprise show all enterprises names
 func ExampleEnterprise() {
-	for _, e := range abiquo.Enterprises(nil).List() {
+	for _, e := range abiquo.Enterprises().Collection(nil).List() {
 		fmt.Println(e.URL())
 	}
 }

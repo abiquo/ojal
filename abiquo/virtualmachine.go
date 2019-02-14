@@ -2,6 +2,7 @@ package abiquo
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/abiquo/ojal/core"
 )
@@ -76,48 +77,90 @@ type VirtualMachineState struct {
 	core.DTO
 }
 
-// Reconfigure reconfigures v
-func (v *VirtualMachine) Reconfigure() (err error) {
-	_, err = core.Rest(nil, core.Put(v.URL(), "acceptedrequest", v.Media(), v))
+// AttachDisk add a disk link to the *VirtualMachine in the last position
+func (v *VirtualMachine) AttachDisk(disk Disk) {
+	diskLink := disk.Link().SetRel(fmt.Sprintf("disk%v", len(v.Disks())))
+	diskLink.DiskControllerType = disk.ControllerType()
+	diskLink.DiskController = disk.Controller()
+	v.Add(diskLink)
+}
+
+// AttachNIC add a nic link to the *VirtualMachine in the last position
+func (v *VirtualMachine) AttachNIC(nic *core.Link) {
+	nicLink := nic.SetRel(fmt.Sprintf("nic%v", len(v.NICs())))
+	v.Add(nicLink)
+}
+
+// Delete removes an existing VirtualMachine from the API
+func (v *VirtualMachine) Delete() (err error) {
+	call := core.Delete(v)
+	switch v.State {
+	case "NOT_ALLOCATED":
+		_, err = core.Rest(nil, call)
+	default:
+		err = NewTask(core.Delete(v))
+		err, ok := err.(core.Error)
+		if ok && err.Collection[0].Code == "VM-1" {
+			return nil
+		}
+	}
+
 	return
+}
+
+// DetachDisk ...
+func (v *VirtualMachine) DetachDisk(disk Disk) {
+	var diskLink *core.Link
+	for i, l := range v.Links {
+		if disk.URL() == l.URL() {
+			diskLink = l
+			v.Links[i] = v.Links[len(v.Links)-1]
+			v.Links = v.Links[:len(v.Links)-1]
+			break
+		}
+	}
+
+	if diskLink == nil {
+		return
+	}
+
+	index := func(l *core.Link) (i int) {
+		fmt.Sscanf(l.Rel, "disk%d", &i)
+		return
+	}
+
+	for _, l := range v.Links {
+		if l.DiskControllerType != "" && index(l) < index(disk.Link()) {
+			l.Rel = fmt.Sprintf("disk%d", index(disk.Link())-1)
+		}
+	}
 }
 
 // Deploy deploys v
 func (v *VirtualMachine) Deploy() (err error) {
-	return NewTask(core.Post(
-		v.Rel("deploy").Href,
-		"acceptedrequest",
-		"virtualmachinetask",
-		v,
-	))
+	return NewTask(core.Post(v.Rel("deploy"), acceptedRequest, core.Media("*/*"), nil))
 }
 
-// Undeploy undeploys v
-func (v *VirtualMachine) Undeploy() (err error) {
-	return NewTask(core.Post(
-		v.Rel("undeploy").Href,
-		"acceptedrequest",
-		"virtualmachinetask",
-		v,
-	))
+// Disks returns an slice with the VM disk links
+func (v *VirtualMachine) Disks() core.Links {
+	return v.Links.Filter(func(l *core.Link) bool {
+		return l.IsMedia("harddisk") || l.IsMedia("volume")
+	})
 }
 
-// Reboot the VM
-func (v *VirtualMachine) Reboot() (err error) {
-	return NewTask(core.Post(
-		v.Rel("reset").Href,
-		"acceptedrequest",
-		"application/json",
-		nil,
-	))
+// NICs returns an slice with the VM NIC links
+func (v *VirtualMachine) NICs() core.Links {
+	return v.Links.Filter(func(l *core.Link) bool {
+		return l.IsMedia("privateip") || l.IsMedia("externalip") || l.IsMedia("publicip")
+	})
 }
 
 // Off powers off the VM
 func (v *VirtualMachine) Off() (err error) {
 	return NewTask(core.Put(
-		v.Rel("state").Href,
-		"acceptedrequest",
-		"virtualmachinestate",
+		v.Rel("state"),
+		acceptedRequest,
+		virtualMachineState,
 		&VirtualMachineState{
 			State: "OFF",
 		},
@@ -127,61 +170,52 @@ func (v *VirtualMachine) Off() (err error) {
 // On powers on the VM
 func (v *VirtualMachine) On() (err error) {
 	return NewTask(core.Put(
-		v.Rel("state").Href,
-		"acceptedrequest",
-		"virtualmachinestate",
+		v.Rel("state"),
+		acceptedRequest,
+		virtualMachineState,
 		&VirtualMachineState{
 			State: "ON",
 		},
 	))
 }
 
-// SetMetadata sets the VM metadata as requested
-func (v *VirtualMachine) SetMetadata(metadata *VirtualMachineMetadata) error {
-	return core.Update(v.Rel("metadata"), metadata)
+// Reboot the VM
+func (v *VirtualMachine) Reboot() (err error) {
+	return NewTask(core.Post(v.Rel("reset"), acceptedRequest, core.Media("application/json"), nil))
 }
 
-// Disks returns an slice with the VM disk links
-func (v *VirtualMachine) Disks() []*core.Link {
-	return v.Links.Filter(func(l *core.Link) bool {
-		return l.IsMedia("harddisk") || l.IsMedia("volume")
-	})
+// Reconfigure reconfigures v
+func (v *VirtualMachine) Reconfigure() (err error) {
+	call := core.Put(v, acceptedRequest, v, v)
+	switch v.State {
+	case "NOT_ALLOCATED":
+		_, err = core.Rest(nil, call)
+	default:
+		err = NewTask(call)
+	}
+
+	return
 }
 
-// NICs returns an slice with the VM NIC links
-func (v *VirtualMachine) NICs() (nics []*core.Link) {
-	return v.Links.Filter(func(l *core.Link) bool {
-		return l.IsMedia("privateip") || l.IsMedia("externalip") || l.IsMedia("publicip")
-	})
+// SetVariables ...
+func (v *VirtualMachine) SetVariables(variables map[string]string) (err error) {
+	_, err = core.Rest(nil, core.Put(v, v, v, map[string]interface{}{
+		"variables": variables,
+	}))
+	return
 }
 
-// AttachDisk add a disk link to the *VirtualMachine in the last position
-func (v *VirtualMachine) AttachDisk(disk Disk) error {
-	diskLink := disk.Link().SetRel(fmt.Sprintf("disk%v", len(v.Disks())))
-	diskLink.DiskControllerType = disk.ControllerType()
-	diskLink.DiskController = disk.Controller()
-	v.Add(diskLink)
-	return nil
-}
-
-// AttachNIC add a nic link to the *VirtualMachine in the last position
-func (v *VirtualMachine) AttachNIC(nic *core.Link) error {
-	nicLink := nic.SetRel(fmt.Sprintf("nic%v", len(v.NICs())))
-	v.Add(nicLink)
-	return nil
-}
-
-// Delete removes an existing VirtualMachine from the API
-func (v *VirtualMachine) Delete() error {
-	return core.Remove(v)
+// SetVMMetadata sets the VM metadata as requested
+func (v *VirtualMachine) SetVMMetadata(metadata *VirtualMachineMetadata) error {
+	return v.Rel("metadata").Update(metadata)
 }
 
 // Shutdown powers off the VM
 func (v *VirtualMachine) Shutdown() (err error) {
 	return NewTask(core.Put(
-		v.Rel("state").Href,
-		"acceptedrequest",
-		"virtualmachinestate",
+		v.Rel("state"),
+		acceptedRequest,
+		virtualMachineState,
 		&VirtualMachineState{
 			GracefulShutdown: true,
 			State:            "OFF",
@@ -189,8 +223,44 @@ func (v *VirtualMachine) Shutdown() (err error) {
 	))
 }
 
-// GetState return v VirtualMachine state
-func (v *VirtualMachine) GetState() (state VirtualMachineState, err error) {
-	err = core.Read(v.Rel("state"), &state)
+// Synchronized ...
+func (v *VirtualMachine) Synchronized() (done bool, err error) {
+	tmp := new(VirtualMachine)
+	err = v.Read(tmp)
+	if err != nil {
+		return
+	}
+
+	if v.LastSynchronize < tmp.LastSynchronize {
+		done = true
+		*v = *tmp
+	}
 	return
+}
+
+// Synchronize ...
+func (v *VirtualMachine) Synchronize() {
+	for {
+		time.Sleep(1 * time.Second)
+		if done, _ := v.Synchronized(); done {
+			break
+		}
+	}
+}
+
+// Undeploy undeploys v
+func (v *VirtualMachine) Undeploy(vmt *VirtualMachineTask) (err error) {
+	return NewTask(core.Post(
+		v.Rel("undeploy"),
+		acceptedRequest,
+		virtualMachineTask,
+		vmt,
+	))
+}
+
+// VirtualMachineTask ...
+type VirtualMachineTask struct {
+	ForceVDCLimits            bool `json:"forceVdcLimits,omitempty"`
+	ForceUndeploy             bool `json:"forceUndeploy,omitempty"`
+	ForceEnterpriseSoftLimits bool `json:"forceEnterpriseSoftLimits,omitempty"`
 }
