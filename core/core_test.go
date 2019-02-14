@@ -237,11 +237,11 @@ func ExampleDTO_Remove() {
 
 	// Output:
 	// <nil>
-	// [{ENTERPRISE-4 Duplicate name for an enterprise}]
+	// 409 ENTERPRISE-4 Duplicate name for an enterprise
 	// <nil>
 	// <nil>
 	// <nil>
-	// [{EN-0 The requested enterprise does not exist}]
+	// 404 EN-0 The requested enterprise does not exist
 }
 
 func TestWalk(t *testing.T) {
