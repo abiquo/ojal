@@ -79,24 +79,6 @@ func TestLink(t *testing.T) {
 	verify(t, "link.Rel", none.Rel, "none")
 }
 
-func TestObject(t *testing.T) {
-	object := make(core.Object)
-	verify(t, "zero.Href()", object.Href(), "")
-	verify(t, "zero.Media()", object.Media(), core.Media("").Media())
-
-	object.Add(none)
-	verify(t, "none.Href()", object.Href(), "")
-	verify(t, "none.Media()", object.Media(), core.Media("").Media())
-
-	object.Add(self)
-	verify(t, "self.Href()", object.Href(), self.Href)
-	verify(t, "self.Media()", object.Media(), self.Media())
-
-	object.Add(edit)
-	verify(t, "edit.Href()", object.Href(), edit.Href)
-	verify(t, "edit.Media()", object.Media(), edit.Media())
-}
-
 func TestCall(t *testing.T) {
 	post, err := core.Rest(result, core.Post(
 		core.NewLink("admin/enterprises"),
