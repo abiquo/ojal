@@ -239,11 +239,12 @@ func (v *VirtualMachine) Synchronized() (done bool, err error) {
 }
 
 // Synchronize ...
-func (v *VirtualMachine) Synchronize() {
+func (v *VirtualMachine) Synchronize() (err error) {
 	for {
-		time.Sleep(1 * time.Second)
-		if done, _ := v.Synchronized(); done {
-			break
+		time.Sleep(5 * time.Second)
+		done, err := v.Synchronized()
+		if err != nil || done {
+			return err
 		}
 	}
 }
