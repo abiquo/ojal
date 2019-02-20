@@ -37,7 +37,7 @@ func (h *HardDisk) ControllerType() string { return h.DiskControllerType }
 type Firewall struct {
 	ID          int    `json:"id,omitempty"`
 	Name        string `json:"name"`
-	Description string `json:"description"`
+	Description string `json:"description,omitempty"`
 	ProviderIS  string `json:"providerId,omitempty"`
 	core.DTO
 }
