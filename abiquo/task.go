@@ -9,9 +9,28 @@ import (
 
 // Task represents an API task resource
 type Task struct {
-	UserID string `json:"userId"`
-	TaskID string `json:"taskId"`
-	State  string `json:"state"`
+	CreationTimestamp int64  `json:"creationTimestamp"`
+	OwnerID           string `json:"ownerId"`
+	State             string `json:"state"`
+	TaskID            string `json:"taskId"`
+	Timestamp         int64  `json:"timestamp"`
+	Type              string `json:"type"`
+	UserID            string `json:"userId"`
+
+	Jobs struct {
+		TotalSize  interface{} `json:"totalSize"`
+		Collection []struct {
+			ID                string `json:"id"`
+			ParentTaskID      string `json:"parentTaskId"`
+			Type              string `json:"type"`
+			Description       string `json:"description"`
+			State             string `json:"state"`
+			RollbackState     string `json:"rollbackState"`
+			CreationTimestamp int64  `json:"creationTimestamp"`
+			Timestamp         int64  `json:"timestamp"`
+		} `json:"collection"`
+	} `json:"jobs"`
+
 	core.DTO
 }
 
