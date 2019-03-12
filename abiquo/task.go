@@ -72,3 +72,17 @@ func taskWait(endpoint *core.Link) (state string, err error) {
 		}
 	}
 }
+
+func (t *Task) workflow(action string) error {
+	link := t.Rel(action)
+	if link == nil {
+		return fmt.Errorf("*Task.action: there is no %v link for this task", action)
+	}
+	return link.SetType("application/json").Create(nil)
+}
+
+// Continue approves a workflow task
+func (t *Task) Continue() error { return t.workflow("continue") }
+
+// Cancel denies a workflow task
+func (t *Task) Cancel() error { return t.workflow("cancel") }
