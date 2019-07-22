@@ -7,7 +7,7 @@ go get github.com/abiquo/ojal
 # Test
 
 ```
-go test -v ojal
+go test -v github.com/abiquo/ojal/abiquo
 ```
 
 # Documentation
